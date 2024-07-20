@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Overlay Images with Grid</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background-color: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .container {
+      position: relative;
+      width: 90vw; /* Scale to 90% of the viewport width */
+      max-width: 700px; /* Max width of images */
+      aspect-ratio: 450 / 330; /* Maintain aspect ratio of the container */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container img {
+      position: absolute;
+      width: 100%; /* Scale images to fit container */
+      height: 100%; /* Ensure images fill container */
+      object-fit: cover; /* Maintain aspect ratio and cover the container */
+    }
+
+    .background-image {
+      z-index: 1; /* Positioned below the overlay image */
+      animation: float 3s ease-in-out infinite; /* Continuous float animation */
+    }
+
+    .overlay-image {
+      z-index: 2; /* Positioned above the background image */
+    }
+
+    .grid-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(15, 1fr); /* 15 columns */
+      grid-template-rows: repeat(11, 1fr); /* 11 rows */
+      z-index: 3; /* Positioned above the images */
+    }
+
+    .grid-cell {
+      border: 0.5px solid rgba(255, 255, 255, 0.429); /* Thin white lines for grid cells */
+      box-sizing: border-box; /* Ensure border is included in cell size */
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0); /* Start position */
+      }
+      50% {
+        transform: translateY(-5px); /* Move up by 5px */
+      }
+      100% {
+        transform: translateY(0); /* End position */
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="images/nav01.webp" class="background-image" alt="Background Image">
+    <img src="images/navarrows.webp" class="overlay-image" alt="Overlay Image">
+    <div class="grid-overlay">
+      <!-- Generate grid cells dynamically using JavaScript -->
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          const gridOverlay = document.querySelector('.grid-overlay');
+          for (let i = 0; i < 15 * 11; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('grid-cell');
+            gridOverlay.appendChild(cell);
+          }
+        });
+      </script>
+    </div>
+  </div>
+</body>
+</html>

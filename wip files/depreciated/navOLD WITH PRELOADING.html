@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Small Planet Phantasmagoria</title>
+  <link rel="stylesheet" href="navstyle.css">
+  <script src="../audio-message.js" defer></script>
+  <link rel="prefetch" href="images/0123.webp" as="image">
+  <link rel="prefetch" href="images/nav01.webp" as="image">
+  <link rel="prefetch" href="images/nav02.webp" as="image">
+  <link rel="prefetch" href="images/nav03.webp" as="image">
+  <link rel="prefetch" href="images/nav04.webp" as="image">
+  <link rel="prefetch" href="images/nav05.webp" as="image">
+  <link rel="prefetch" href="images/nav06.webp" as="image">
+  <link rel="prefetch" href="images/nav07.webp" as="image">
+  <link rel="prefetch" href="images/nav08.webp" as="image">
+  <link rel="prefetch" href="images/nav09.webp" as="image">
+  <link rel="prefetch" href="images/nav10.webp" as="image">
+  <link rel="prefetch" href="images/nav11.webp" as="image">
+  <link rel="prefetch" href="images/nav12.webp" as="image">
+  <link rel="prefetch" href="images/nav13.webp" as="image">
+  <link rel="prefetch" href="images/nav14.webp" as="image">
+  <link rel="prefetch" href="images/nav15.webp" as="image">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: black;
+      overflow: hidden;
+    }
+    .container {
+      position: relative;
+      width: 90%;
+      max-width: 600px;
+    }
+    .background-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      margin-top: 70px;
+    }
+    .grid-overlay {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      position: absolute;
+      top: 60px;
+      left: 0;
+      width: 100%;
+      height: calc(100% - 60px);
+      z-index: 1;
+    }
+
+    .grid-cell {
+      border: 1px solid #fff; /* Optional: To visualize cell boundaries */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .grid-overlay img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Ensures the image covers the cell without stretching */
+      cursor: pointer;
+    }
+        .grid-overlay a, .grid-overlay div {
+          display: block;
+          width: 100%;
+          height: 100%;
+          border: 1px solid white; /* Add a white border to make the grid visible */
+          box-sizing: border-box; /* Ensure the border is included in the element's dimensions */
+        }
+        .grid-overlay a {
+          text-indent: -9999px; /* Hide text */
+          background-color: rgba(0, 0, 0, 0); /* Transparent background */
+        }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="images/nav01.webp" class="background-image" id="backgroundImage">
+    <div class="grid-overlay" id="gridOverlay"></div>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const backgroundImage = document.getElementById('backgroundImage');
+      const gridOverlay = document.getElementById('gridOverlay');
+      let currentImageNumber = getImageNumberFromSrc(backgroundImage.src);
+  
+      function loadGrid(jsonFile) {
+        fetch(jsonFile)
+          .then(response => response.json())
+          .then(data => {
+            const grid = data.grid;
+            gridOverlay.innerHTML = ''; // Clear previous grid
+  
+            grid.forEach(row => {
+              row.forEach(cell => {
+                let cellElement = document.createElement('div');
+                cellElement.classList.add('grid-cell');
+  
+                if (cell.href) {
+                  const linkElement = document.createElement('a');
+                  linkElement.href = cell.href;
+                  linkElement.innerText = cell.text || 'Link';
+                  cellElement.appendChild(linkElement);
+                } else if (cell.action) {
+                  cellElement.dataset.action = cell.action;
+                  cellElement.dataset.newImage = cell.newImage;
+                  cellElement.dataset.newGrid = cell.newGrid;
+                  cellElement.style.cursor = 'pointer';
+                  cellElement.innerText = 'Change Image'; // For visibility
+                  cellElement.addEventListener('click', handleCellAction);
+                } else if (cell.image) {
+                  const imgElement = document.createElement('img');
+                  imgElement.src = cell.image;
+                  imgElement.alt = cell.alt || 'Image';
+                  imgElement.style.width = '100%'; // Make sure it fits the cell
+                  imgElement.style.height = '100%'; // Make sure it fits the cell
+                  imgElement.style.objectFit = 'cover'; // Ensure it covers the cell properly
+                  imgElement.addEventListener('click', function() {
+                    handleImageClick(cell);
+                  });
+                  cellElement.appendChild(imgElement);
+                }
+  
+                gridOverlay.appendChild(cellElement);
+              });
+            });
+          })
+          .catch(error => console.error('Error loading grid data:', error));
+      }
+  
+      function getImageNumberFromSrc(src) {
+        const filename = src.split('/').pop();
+        return filename.match(/\d+/)[0]; // Extracts the number from the filename
+      }
+  
+      function handleCellAction(event) {
+        const action = event.currentTarget.dataset.action;
+        const newImage = event.currentTarget.dataset.newImage;
+        const newGrid = event.currentTarget.dataset.newGrid;
+  
+        if (action === 'changeImage') {
+          const newImageNumber = getImageNumberFromSrc(newImage);
+          const newImageSrc = `images/${newImage}`;
+          const newJsonFile = `grid-links${newImageNumber}.json`;
+  
+          backgroundImage.src = newImageSrc;
+          currentImageNumber = newImageNumber;
+          loadGrid(newJsonFile);
+        }
+      }
+  
+      function handleImageClick(cell) {
+        if (cell.action === 'changeImage') {
+          const newImageSrc = `images/${cell.newImage}`;
+          const newJsonFile = cell.newGrid;
+  
+          backgroundImage.src = newImageSrc;
+          currentImageNumber = getImageNumberFromSrc(newImageSrc);
+          loadGrid(newJsonFile);
+        }
+      }
+  
+      // Initial load
+      const initialJsonFile = `grid-links${currentImageNumber}.json`;
+      loadGrid(initialJsonFile);
+    });
+  </script>
+  
+</body>
+</html>
