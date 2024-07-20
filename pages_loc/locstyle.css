@@ -1,0 +1,61 @@
+body {
+  margin: 0;
+  padding: 10px;
+  background-color: black;
+  color: white; /* Default text color for readability */
+  overflow: auto; /* Allow scrolling if content exceeds viewport height */
+  font-family: Georgia, serif; /* Use Georgia font for text */
+}
+
+img {
+  /* Turn off smoothing/anti-aliasing */
+  image-rendering: optimizeSpeed;             /* PREFER SPEED OVER SMOOTHING  */
+  image-rendering: -moz-crisp-edges;          /* Firefox                        */
+  image-rendering: -o-crisp-edges;            /* Opera                          */
+  image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
+  image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
+  -ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
+}
+
+table {
+  width: 100%;
+  max-width: 600px; /* Max width for the main table */
+  margin: 0 auto; /* Center the table horizontally */
+  border-collapse: collapse; /* Remove gaps between cells */
+}
+
+.image-row img {
+  width: 100%; /* Make image full width of the cell */
+  height: auto; /* Maintain aspect ratio */
+}
+
+.text-row {
+  padding: 20px; /* Add padding around text for readability */
+  text-align: left;
+  text-align: justify;
+}
+
+.nested-table {
+  width: 100%; /* Make nested table full width of its container */
+  max-width: 150px; /* Width of nested table */
+  height: 150px; /* Height of nested table */
+  margin: 0 auto; /* Center the nested table */
+  border-collapse: collapse;
+}
+
+.nested-table td {
+  width: 50px;
+  height: 50px;
+  border: 0px solid white; /* Add border to nested table cells for visibility */
+  padding: 0; /* Remove padding */
+}
+
+.nested-table img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Ensure the image fits within the cell without distortion */
+}
+
+.scrollable {
+  overflow-y: auto; /* Enable vertical scrolling */
+}

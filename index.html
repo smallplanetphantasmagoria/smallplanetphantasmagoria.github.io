@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href='https://fonts.googleapis.com/css?family=Press Start 2P' rel='stylesheet'>
+  <title>Small Planet Phantasmagoria</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden; /* Prevents scrollbars in the main page */
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      position: relative; /* Make the body position relative for absolute positioning inside it */
+    }
+    iframe {
+      border: none; /* Removes the border around the iframe */
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      position: absolute; /* Ensures it covers the entire area */
+      top: 0;
+      left: 0;
+      background: black;
+    }
+    img {
+      /* Turn off smoothing/anti-aliasing */
+      image-rendering: optimizeSpeed;             /* PREFER SPEED OVER SMOOTHING  */
+      image-rendering: -moz-crisp-edges;          /* Firefox                        */
+      image-rendering: -o-crisp-edges;            /* Opera                          */
+      image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
+      image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
+      -ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
+    }
+    .bottom-right-container {
+      position: absolute; /* Absolute positioning for bottom-right corner */
+      bottom: 10px; /* Space from the bottom edge */
+      right: 35px; /* Space from the right edge */
+      background: #000000; /* Background color for the container */
+      color: white; /* Text color for the container */
+      padding: 0px 0px; /* Padding around the container */
+      border-radius: 0px; /* Rounded corners */
+      z-index: 100; /* Ensure it appears above the iframe */
+      display: flex; /* Arrange children in a row */
+      align-items: center; /* Center align items vertically */
+    }
+    .audio-player {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      background: rgb(49, 49, 49);
+      border-bottom: 4px solid rgb(0, 0, 0);
+      cursor: pointer;
+      margin-right: 10px; /* Add space between the audio player and menu */
+      flex-shrink: 0; /* Prevent shrinking */
+      transition: 0.2s; /* Smooth transition for background color */
+    }
+    .audio-player:hover {
+      background: gray; /* Background color on hover */
+    }
+    .audio-player svg {
+      width: 30px;
+      height: 30px;
+      fill: rgb(0, 0, 0);
+    }
+    .menu {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: grayscale(100%) brightness(50%);
+      transition: 0.5s;
+      flex-shrink: 0; /* Prevent shrinking */
+    }
+    .menu-img {
+      width: 50px;
+      height: 50px;
+      transition: 0.2s;
+    }
+    .menu .tooltiptext {
+      visibility: hidden;
+      width: 53px;
+      background-color: rgb(255, 255, 255);
+      color: #000000;
+      font-family: 'Press Start 2P', 'Courier New', monospace;
+      font-size: 8px;
+      text-align: center;
+      border-radius: 20px;
+      padding: 8px 0;
+      position: absolute;
+      z-index: 1;
+      bottom: 102%;
+      left: 96%;
+      margin-left: -50px;
+      opacity: 0;
+      transition: opacity 0.2s; /* Fade transition for tooltip */
+    }
+    .menu .tooltiptext::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: rgb(255, 255, 255) transparent transparent transparent;
+    }
+    .menu:hover {
+      filter: grayscale(0%) brightness(100%);
+      transition: 0.2s;
+    }
+    /* Splash Screen Styles */
+    .splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: black;
+      z-index: 20; /* Ensure it's above other content */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 3s ease;
+      opacity: 1;
+      /* Hide splash screen after click */
+      cursor: pointer;
+      overflow: hidden; /* Ensure overflow is hidden */
+    }
+    .splash-screen img {
+      position: absolute;
+    }
+    .splash-screen img:first-child {
+      width: auto;
+      height: 100px; /* Initial height */
+      animation: sizeTransition 10s forwards, fadeIn 10s forwards; /* Apply size transition and fade-in animation */
+    }
+    .splash-screen img:last-child {
+      opacity: 0; /* Initial opacity */
+      animation: fadeIn 5s forwards; /* Apply fade-in animation */
+    }
+    @keyframes sizeTransition {
+      from {
+        transform: scale(50%);
+      }
+      to {
+        transform: scale(400%); /* Adjust as needed to control the final size */
+      }
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    .splash-screen.fade-out {
+      opacity: 0;
+      pointer-events: none; /* Ensure clicks pass through when fading out */
+    }
+  </style>
+</head>
+<body>
+  <iframe id="main-frame" src=""></iframe>
+  <div class="bottom-right-container">
+    <div class="audio-player" id="audio-button">
+      <svg id="music-note-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/>
+      </svg>
+      <svg id="play-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <path d="M8 5v14l11-7L8 5z"/>
+      </svg>
+      <svg id="pause-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+      </svg>
+      <audio id="audio-player" loop>
+        <source id="audio-source" src="sounds/nav00.m4a" type="audio/mpeg">
+      </audio>
+    </div>
+    <div class="menu">
+      <a href="about.html" onmouseover="changeImage(this)" onmouseout="resetImage(this)">
+        <img src="images/menu.gif" class="menu-img">
+        <span class="tooltiptext">ABOUT</span>
+      </a>
+    </div>
+  </div>
+  <!-- Splash Screen -->
+  <div class="splash-screen" id="splash-screen">
+    <img src="images/nav00.webp" alt="Splash Image 1" style="animation-timing-function: linear !important;">
+    <img src="images/nav00b.webp" alt="Splash Image 2" style="width: 50% !important; animation-delay: 10s !important;">
+  </div>
+
+  <script>
+    // Function to generate a random number between min and max (inclusive)
+    function getRandomNumber(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    // Function to update the iframe src with the random number
+    function updateIframeSrcWithRandomNumber() {
+      const randomNumber = getRandomNumber(1, 15); // Generate random number between 1 and 15
+      const formattedNumber = randomNumber.toString().padStart(2, '0'); // Format number as two digits
+      const iframe = document.getElementById('main-frame');
+
+      // Update the src attribute of the iframe with leading zero if necessary
+      iframe.src = `pages_nav/nav${formattedNumber}.html`; // Example URL pattern
+    }
+
+    // Call the function to update the iframe src when the page loads
+    window.onload = updateIframeSrcWithRandomNumber;
+
+    const iframe = document.getElementById('main-frame');
+    const audioPlayer = document.getElementById('audio-player');
+    const audioSource = document.getElementById('audio-source');
+    const audioButton = document.getElementById('audio-button');
+    const musicNoteIcon = document.getElementById('music-note-icon');
+    const playIcon = document.getElementById('play-icon');
+    const pauseIcon = document.getElementById('pause-icon');
+    const splashScreen = document.getElementById('splash-screen');
+
+    let fadeDuration = 3000; // Duration for fade-in and fade-out in milliseconds
+
+    // Function to handle messages from the iframe
+    window.addEventListener('message', (event) => {
+      if (event.data.action === 'changeAudio') {
+        const audioUrl = event.data.url;
+
+        // Check if audio is currently playing
+        if (!audioPlayer.paused) {
+          fadeOutAudio(() => {
+            // After fade-out, update the source and fade in the new audio
+            audioSource.src = audioUrl;
+            audioPlayer.load();
+            fadeInAudio();
+          });
+        } else {
+          // Update the source and pause
+          audioSource.src = audioUrl;
+          audioPlayer.load();
+          // Audio remains paused
+        }
+      }
+    });
+
+    let tooltipTimeout;
+
+    function changeImage(element) {
+      const img = element.querySelector('.menu-img');
+      img.src = 'images/menu2.gif';
+
+      // Show the tooltip after 2 seconds
+      tooltipTimeout = setTimeout(() => {
+        const tooltip = element.querySelector('.tooltiptext');
+        tooltip.style.visibility = 'visible';
+        tooltip.style.opacity = '1';
+      }, 2070); // Delay in milliseconds (2000ms = 2 seconds)
+    }
+
+    function resetImage(element) {
+      const img = element.querySelector('.menu-img');
+      img.src = 'images/menu.gif';
+
+      // Hide the tooltip immediately
+      clearTimeout(tooltipTimeout);
+      const tooltip = element.querySelector('.tooltiptext');
+      tooltip.style.visibility = 'hidden';
+      tooltip.style.opacity = '0';
+    }
+
+    function fadeInAudio() {
+      let volume = 0;
+      audioPlayer.volume = volume;
+      audioPlayer.play();
+      
+      const interval = setInterval(() => {
+        if (volume < 1) {
+          volume += 0.05; // Increase volume gradually
+          audioPlayer.volume = Math.min(volume, 1);
+        } else {
+          clearInterval(interval);
+        }
+      }, fadeDuration / 50); // Adjust the interval for smooth fading
+    }
+
+    function fadeOutAudio(callback) {
+      let volume = audioPlayer.volume;
+      
+      const interval = setInterval(() => {
+        if (volume > 0) {
+          volume -= 0.05; // Decrease volume gradually
+          audioPlayer.volume = Math.max(volume, 0);
+        } else {
+          clearInterval(interval);
+          audioPlayer.pause(); // Stop the audio after fade-out
+          if (callback) callback(); // Execute callback after fade-out
+        }
+      }, fadeDuration / 50); // Adjust the interval for smooth fading
+    }
+
+    audioButton.addEventListener('mouseover', () => {
+      if (audioPlayer.paused && musicNoteIcon.style.display === 'block') {
+        musicNoteIcon.style.display = 'none';
+        playIcon.style.display = 'block';
+      }
+      audioButton.style.background = 'gray'; // Change background on hover
+    });
+
+    audioButton.addEventListener('mouseout', () => {
+      if (audioPlayer.paused) {
+        playIcon.style.display = 'none';
+        musicNoteIcon.style.display = 'block';
+      }
+      audioButton.style.background = 'rgb(49, 49, 49)'; // Reset background color
+    });
+
+    audioButton.addEventListener('click', () => {
+      if (audioPlayer.paused) {
+        fadeInAudio(); // Apply fade-in effect when playing
+        playIcon.style.display = 'none';
+        pauseIcon.style.display = 'block';
+        musicNoteIcon.style.display = 'none';
+      } else {
+        fadeOutAudio(); // Apply fade-out effect when pausing
+        pauseIcon.style.display = 'none';
+        playIcon.style.display = 'none';
+        musicNoteIcon.style.display = 'block';
+      }
+    });
+
+    // Add click event listener to splash screen elements to fade out
+    splashScreen.addEventListener('click', () => {
+      splashScreen.classList.add('fade-out');
+    });
+  </script>
+</body>
+</html>

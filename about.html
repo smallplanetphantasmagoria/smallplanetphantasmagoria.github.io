@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - Small Planet Phantasmagoria</title>
+  <style>
+    body {
+      margin: 10px;
+      padding: 10px;
+      background-color: black;
+      overflow: auto; /* Allow scrolling if content exceeds viewport height */
+    }
+    .image {
+      image-rendering: optimizeSpeed;             /* PREFER SPEED OVER SMOOTHING  */
+      image-rendering: -moz-crisp-edges;          /* Firefox                        */
+      image-rendering: -o-crisp-edges;            /* Opera                          */
+      image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
+      image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
+      -ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 100px 1fr 100px; /* Fixed columns + central content */
+      gap: 20px; /* No gap between columns */
+      max-width: 800px;
+      margin: 0 auto; /* Center the grid container horizontally */
+    .fixed-column {
+      width: 100px;
+      background-color: black; /* Match the background color of the body */
+    }
+    .fixed-column td {
+      height: 30px; /* Height of each row in the fixed columns */
+      border: 0px solid white; /* Border to make the cells visible */
+    }
+    .main-content {
+      display: grid;
+      grid-template-rows: auto auto auto; /* 3 rows for the central content */
+      gap: 0; /* No gap between rows */
+    }
+    .image-row img {
+      width: 100%;
+      height: auto;
+    }
+    .text-row {
+      color: white;
+      text-align: left;
+      text-align: justify;
+      padding: 0px; /* Add some padding for readability */
+      font-family: Georgia;
+      font-size: 20px;
+    }
+    .nested-table {
+      margin: 0 auto; /* Center the nested table horizontally */
+      border-collapse: collapse;
+      table-layout: fixed; /* Ensure cells are of fixed size */
+      width: 150px; /* Set width to 3 x 50px */
+      height: 150px; /* Set height to 3 x 50px */
+    }
+    .nested-table td {
+      width: 50px;
+      height: 50px;
+      border: 0px solid white; /* Add border to nested table cells for visibility */
+      padding: 0; /* Remove padding */
+    }
+    .nested-table img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* Ensure the image fits within the cell without distortion */
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Left Fixed Column -->
+    <table class="fixed-column">
+      <tbody>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+      </tbody>
+    </table>
+
+    <!-- Central Content -->
+    <div class="main-content">
+      <div class="image-row">
+        <img src="images/about.gif" alt="Altair Image" class="image">
+      </div>
+      <div class="text-row">
+        <p>
+        <span style="font-size: 24px;">About Small Planet Phantasmagoria</span><br>
+        <br>
+        I'll put something good here.<br>
+        <br>
+        Probably an actual information-type site with a few pages.<br>
+        </p>
+      </div>
+      <div>
+        <table class="nested-table">
+          <tbody>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>
+                <a href="index.html"><img src="pages_loc/images/nav-home.gif" alt="Navigation Home" class="image"></a>
+              </td>
+              <td></td>
+              </tr>
+            <tr>
+              <td></td>             
+              <td></td>
+              <td></td>
+            </tr>
+            <br>
+            <br>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Right Fixed Column -->
+    <table class="fixed-column">
+      <tbody>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+        <tr><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
