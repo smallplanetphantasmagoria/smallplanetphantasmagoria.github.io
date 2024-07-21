@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Altair Bar - Small Planet Phantasmagoria</title>
-  <script src="../audio-message.js" defer></script>
   <link rel="stylesheet" href="locstyle.css"> <!-- Link to external CSS file -->
 </head>
 <body>
@@ -63,5 +62,17 @@
       </td>
     </tr>
   </table>
+  <script>
+window.addEventListener('load', () => {
+  const audioUrl = 'sounds/loc01-altair-01.m4a'; // Change this to the appropriate audio URL for each iframe page
+  const pageTitle = document.title; // Get the current iframe page's title
+
+  window.parent.postMessage({
+    action: 'changeAudio',
+    url: audioUrl,
+    title: pageTitle // Include the page title in the message
+  }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
+});
+  </script>
 </body>
 </html>

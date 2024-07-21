@@ -56,7 +56,7 @@
       image-rendering: pixelated;                 /* Universal support since 2021   */
       image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
       -ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
-      }
+    }
     /* Container for images and grid overlay */
     .container {
       position: relative;
@@ -133,8 +133,8 @@
       cursor: pointer; /* Pointer cursor for clickable cells */
     }
 
-        /* Mobile-specific styles */
-        @media only screen and (max-width: 768px) {
+    /* Mobile-specific styles */
+    @media only screen and (max-width: 768px) {
       .container {
         width: 100vw;
         max-width: none; /* Remove max-width for mobile */
@@ -154,7 +154,6 @@
         grid-template-columns: repeat(15, 1fr); /* 15 columns */
         grid-template-rows: repeat(11, 1fr); /* 11 rows */
       }
-
     }
 
     /* Ensures no scrollbars appear */
@@ -226,7 +225,6 @@ document.addEventListener('DOMContentLoaded', () => {
               // Create the anchor tag and wrap the linkWrapper
               const linkElement = document.createElement('a');
               linkElement.href = cell.link;
-              linkElement.setAttribute('data-audio', cell.audio || ''); // Add data-audio attribute
               linkElement.appendChild(linkWrapper);
 
               // Clear the cellElement and append the linkElement
@@ -264,35 +262,9 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         });
 
-        // Re-attach event listeners to links after grid is updated
-        attachLinkEventListeners();
       })
       .catch(error => console.error('Error loading grid data:', error));
   }
-
-  // Attach event listeners to all links with data-audio attribute
-  function attachLinkEventListeners() {
-    document.querySelectorAll('a[data-audio]').forEach(link => {
-      link.addEventListener('click', handleClick);
-    });
-  }
-
-  // Function to handle the click event and send a message to the parent window
-  function handleClick(event) {
-  event.preventDefault(); // Prevent default link behavior
-
-  const link = event.target.closest('a'); // Ensure to get the closest <a> element
-  if (link) {
-    const audioUrl = link.getAttribute('data-audio');
-    const href = link.getAttribute('href');
-
-    console.log('Sending postMessage with audio URL:', audioUrl); // Verify message content
-    window.parent.postMessage({ action: 'changeAudio', url: audioUrl }, '*'); // Send the message
-
-    // Manually navigate to the URL
-    window.location.href = href;
-  }
-}
 
   // Preload image before setting it as the source
   function preloadImage(src, callback) {
@@ -366,26 +338,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('keydown', handleKeyboardNavigation);
 
-  // Initialize the MutationObserver to watch for changes in the grid-overlay
-  const observer = new MutationObserver((mutationsList) => {
-    // Check if any of the added nodes are links with data-audio attribute
-    mutationsList.forEach(mutation => {
-      mutation.addedNodes.forEach(node => {
-        if (node.nodeType === Node.ELEMENT_NODE && node.matches('a[data-audio]')) {
-          attachLinkEventListeners();
-        }
-      });
-    });
-  });
-
-  // Observe the grid-overlay for child list changes
-  observer.observe(gridOverlay, { childList: true, subtree: true });
-
   // Load a random starting image and grid
   const initialImage = `images/nav/nav${String(currentIndex).padStart(2, '0')}.webp`;
   const initialGrid = `script/nav/grid-links${String(currentIndex).padStart(2, '0')}.json`;
 
   updateBackgroundImage(initialImage, initialGrid);
 });
-  </script>  </body>
+window.addEventListener('load', () => {
+      window.parent.postMessage({
+        action: 'changeAudio',
+        url: 'sounds/nav00.m4a' // Change this to the appropriate audio URL for each iframe page
+      }, '*');
+    });
+    function sendTitleAndAudio() {
+  const audioUrl = 'sounds/nav00.m4a'; // Update this with the appropriate audio URL
+  const pageTitle = document.title; // Retrieve the title from the <title> tag
+
+  window.parent.postMessage({
+    action: 'changeAudio',
+    url: audioUrl,
+    title: pageTitle // Include the title in the message
+  }, '*'); // Replace '*' with the specific origin if needed
+}
+
+// Use the `pageshow` event to handle cases where the page is reloaded or navigated back to
+window.addEventListener('pageshow', () => {
+  sendTitleAndAudio();
+});
+
+// Also use the `load` event for the initial load
+window.addEventListener('load', () => {
+  sendTitleAndAudio();
+});
+</script>
+</body>
 </html>

@@ -35,7 +35,7 @@
       image-rendering: pixelated;                 /* Universal support since 2021   */
       image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
       -ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
-      }
+    }
 
     .bottom-right-container {
       position: absolute; /* Position in bottom-right corner */
@@ -229,20 +229,22 @@
     const pauseIcon = document.getElementById('pause-icon');
     const splashScreen = document.getElementById('splash-screen');
 
-    let fadeDuration = 3000; // Fade duration in milliseconds
+    let fadeDuration = 1000; // Fade duration in milliseconds
 
-    // Function to handle incoming messages from the iframe
     window.addEventListener('message', (event) => {
+  // Optionally check event.origin for security purposes
   if (event.data.action === 'changeAudio') {
-    // Fade out current audio
+    const wasPlaying = !audioPlayer.paused; // Check if audio was playing
+
     fadeOutAudio(() => {
-      // Set new audio source and play it
-      audioSource.src = event.data.url; // Set the new audio source
-      audioPlayer.load(); // Reload the audio element
-      
-      // Fade in new audio
-      fadeInAudio();
+      audioSource.src = event.data.url; // Set new audio source
+      audioPlayer.load(); // Reload audio element
+      if (wasPlaying) {
+        fadeInAudio(); // Fade in audio only if it was playing
+      }
     });
+
+    document.title = event.data.title; // Update the browser tab title
   }
 });
     let tooltipTimeout;
@@ -272,34 +274,19 @@
 
     // Fade in audio
     function fadeInAudio() {
-  let volume = 0;
-  audioPlayer.volume = volume;
-  audioPlayer.play();
+      let volume = 0;
+      audioPlayer.volume = volume;
+      audioPlayer.play();
 
-  const interval = setInterval(() => {
-    if (volume < 1) {
-      volume += 0.05;
-      audioPlayer.volume = Math.min(volume, 1);
-    } else {
-      clearInterval(interval);
+      const interval = setInterval(() => {
+        if (volume < 1) {
+          volume += 0.05;
+          audioPlayer.volume = Math.min(volume, 1);
+        } else {
+          clearInterval(interval);
+        }
+      }, fadeDuration / 20); // Adjust interval timing for smoother fade-in
     }
-  }, fadeDuration / 20); // Adjust interval timing for smoother fade-in
-}
-
-function fadeOutAudio(callback) {
-  let volume = audioPlayer.volume;
-
-  const interval = setInterval(() => {
-    if (volume > 0) {
-      volume -= 0.05;
-      audioPlayer.volume = Math.max(volume, 0);
-    } else {
-      clearInterval(interval);
-      audioPlayer.pause();
-      if (callback) callback();
-    }
-  }, fadeDuration / 20); // Adjust interval timing for smoother fade-out
-}
 
     // Fade out audio
     function fadeOutAudio(callback) {
@@ -314,7 +301,7 @@ function fadeOutAudio(callback) {
           audioPlayer.pause();
           if (callback) callback();
         }
-      }, fadeDuration / 50);
+      }, fadeDuration / 20); // Adjust interval timing for smoother fade-out
     }
 
     // Handle audio button hover and click events
@@ -354,9 +341,9 @@ function fadeOutAudio(callback) {
       splashScreen.classList.add('fade-out');
       focusIframe();
     });
-        // Function to set focus to the iframe
-        function focusIframe() {
-      var iframe = document.getElementById('main-frame');
+
+    // Function to set focus to the iframe
+    function focusIframe() {
       if (iframe) {
         iframe.contentWindow.focus();
       }
@@ -364,7 +351,6 @@ function fadeOutAudio(callback) {
 
     // Function to attach the load event to the iframe
     function attachIframeLoadEvent() {
-      var iframe = document.getElementById('main-frame');
       if (iframe) {
         iframe.addEventListener('load', focusIframe);
       }
@@ -375,12 +361,12 @@ function fadeOutAudio(callback) {
       attachIframeLoadEvent();
     };
 
-        // Function to reload the image with a unique query parameter
-        function reloadImage() {
-        var img = document.getElementById('nav00b2');
-        var timestamp = new Date().getTime(); // Unique timestamp
-        img.src = 'images/nav00b2.webp' + timestamp;
-      }
+    // Function to reload the image with a unique query parameter
+    function reloadImage() {
+      var img = document.getElementById('nav00b2');
+      var timestamp = new Date().getTime(); // Unique timestamp
+      img.src = 'images/nav00b2.webp' + '?' + timestamp;
+    }
   </script>
 </body>
 </html>
