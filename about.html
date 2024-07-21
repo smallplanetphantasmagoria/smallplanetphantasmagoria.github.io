@@ -3,148 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About - Small Planet Phantasmagoria</title>
+  <title>About | Small Planet Phantasmagoria</title>
+  <link rel="stylesheet" href="pages_loc/locstyle.css"> <!-- Link to external CSS file -->
   <style>
-    body {
-      margin: 10px;
-      padding: 10px;
-      background-color: black;
-      overflow: auto; /* Allow scrolling if content exceeds viewport height */
-    }
-    .image {
-      image-rendering: optimizeSpeed;             /* PREFER SPEED OVER SMOOTHING  */
-      image-rendering: -moz-crisp-edges;          /* Firefox                        */
-      image-rendering: -o-crisp-edges;            /* Opera                          */
-      image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
-      image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
-      -ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
-    }
-    .container {
-      display: grid;
-      grid-template-columns: 100px 1fr 100px; /* Fixed columns + central content */
-      gap: 20px; /* No gap between columns */
-      max-width: 800px;
-      margin: 0 auto; /* Center the grid container horizontally */
-    }
-    .fixed-column {
-      width: 100px;
-      background-color: black; /* Match the background color of the body */
-    }
-    .fixed-column td {
-      height: 30px; /* Height of each row in the fixed columns */
-      border: 0px solid white; /* Border to make the cells visible */
-    }
-    .main-content {
-      display: grid;
-      grid-template-rows: auto auto auto; /* 3 rows for the central content */
-      gap: 0; /* No gap between rows */
-    }
-    .image-row img {
-      width: 100%;
-      height: auto;
-    }
-    .text-row {
-      color: white;
-      text-align: left;
-      text-align: justify;
-      padding: 0px; /* Add some padding for readability */
-      font-family: Georgia;
-      font-size: 20px;
-    }
-    .nested-table {
-      margin: 0 auto; /* Center the nested table horizontally */
-      border-collapse: collapse;
-      table-layout: fixed; /* Ensure cells are of fixed size */
-      width: 150px; /* Set width to 3 x 50px */
-      height: 150px; /* Set height to 3 x 50px */
-    }
-    .nested-table td {
-      width: 50px;
-      height: 50px;
-      border: 0px solid white; /* Add border to nested table cells for visibility */
-      padding: 0; /* Remove padding */
-    }
-    .nested-table img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain; /* Ensure the image fits within the cell without distortion */
+    video {
+      width: 50% !important; /* Adjust width as needed */
     }
   </style>
+
 </head>
 <body>
   <div class="container">
-    <!-- Left Fixed Column -->
-    <table class="fixed-column">
-      <tbody>
-        <tr><td></td></tr>
-        <tr><td></td></tr>
-        <tr><td></td></tr>
-        <tr><td></td></tr>
-        <tr><td></td></tr>
-        <tr><td></td></tr>
-        <tr><td></td></tr>
-        <tr><td></td></tr>
-        <tr><td></td></tr>
-        <tr><td></td></tr>
-      </tbody>
-    </table>
-
-    <!-- Central Content -->
-    <div class="main-content">
+    <div class="grid">
       <div class="image-row">
-        <img src="images/about.gif" alt="Altair Image" class="image">
-      </div>
+        <video src="videos/about-2.mp4" type="video/mp4" autoplay muted loop></video>
+    </div>
       <div class="text-row">
         <p>
-        <span style="font-size: 24px;">About Small Planet Phantasmagoria</span><br>
-        <br>
-        I'll put something good here.<br>
-        <br>
-        Probably an actual information-type site with a few pages.<br>
+          <span style="font-size: 1.1em;"><i>While travelling the realm of dreams, I discovered a small planet...</i></span>
+          <br>
+          <br>
+          Phantasmagoria is the invention of Tamura Shigeru, an illustrator, mangaka, and animated-film maker from Japan. Inspired by his work—particularly, the series of animated shorts <i>A Piece of Phantasmagoria</i>, and its corresponding point-and-click video game—this is a fansite dedicated Tamura's creation.
+          <br>
+          <br>
+          The website is still under construction. If you've somehow stumbled across this, then please forgive its current state. 
         </p>
       </div>
-      <div>
-        <table class="nested-table">
-          <tbody>
-            <tr>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td></td>
-              <td>
-                <a href="index.html"><img src="pages_loc/images/nav-home.gif" alt="Navigation Home" class="image"></a>
-              </td>
-              <td></td>
-              </tr>
-            <tr>
-              <td></td>             
-              <td></td>
-              <td></td>
-            </tr>
-            <br>
-            <br>
-          </tbody>
-        </table>
+      <div class="navigation">
+        <div class="grid-3x3">
+          <div></div>
+          <a href="nav.html" class="nav-button"><img src="pages_loc/images/nav-home.gif" alt="Navigation Home"></a>
+          <div></div>
+        </div>
       </div>
     </div>
-
-    <!-- Right Fixed Column -->
-    <table class="fixed-column">
-      <tbody>
-        <tr><td></td></tr>
-        <tr><td></td></tr>
-        <tr><td></td></tr>
-        <tr><td></td></tr>
-        <tr><td></td></tr>
-        <tr><td></td></tr>
-        <tr><td></td></tr>
-        <tr><td></td></tr>
-        <tr><td></td></tr>
-        <tr><td></td></tr>
-      </tbody>
-    </table>
   </div>
+  <script>
+    window.addEventListener('load', () => {
+      const audioUrl = 'sounds/about.m4a'; // Change this to the appropriate audio URL for each iframe page
+      const pageTitle = document.title; // Get the current iframe page's title
+
+      window.parent.postMessage({
+        action: 'changeAudio',
+        url: audioUrl,
+        title: pageTitle // Include the page title in the message
+      }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
+    });
+  </script>
 </body>
 </html>
