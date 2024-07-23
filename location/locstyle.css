@@ -7,6 +7,17 @@ body {
   font-family: Georgia, serif; /* Use Georgia font for text */
 }
 
+@media only screen and (max-width: 768px) {
+  .body {
+    padding: 0px;
+    max-width: none; /* Remove max-width for mobile */
+    max-height: 100vh; /* Constrain height for mobile */
+
+  };
+  .container {
+    max-width: 100vw; /* Max width for the container */
+  };}
+
 img {
   /* Disable image smoothing/anti-aliasing */
   image-rendering: optimizeSpeed;             /* STOP SMOOTHING, GIVE ME SPEED  */
@@ -46,6 +57,26 @@ video {
 .image-row img {
   width: 100%; /* Make image full width of the cell */
   height: auto; /* Maintain aspect ratio */
+}
+
+.image-row video{
+    pointer-events: none;
+}
+
+#video::-webkit-media-controls {
+  display: none !important;
+}
+
+#video::-moz-media-controls {
+  display: none !important;
+}
+
+#video::-ms-media-controls {
+  display: none !important;
+}
+
+#video::-o-media-controls {
+  display: none !important;
 }
 
 .text-row {

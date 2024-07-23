@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Altair Bar | Small Planet Phantasmagoria</title>
+  <title>Liquor Shop | Small Planet Phantasmagoria</title>
   <link rel="stylesheet" href="locstyle.css"> <!-- Link to external CSS file -->
 </head>
 <body>
   <div class="container">
     <div class="grid">
       <div class="image-row">
-        <img src="../images/location/altair-01.gif" alt="Altair Image">
+        <video id="video" muted autoplay loop></video>
       </div>
       <div class="text-row">
         <p>
@@ -36,16 +36,44 @@
       </div>
     </div>
   </div>
-  <script>
-    window.addEventListener('load', () => {
-      const audioUrl = 'sounds/glassy-01.m4a'; // Change this to the appropriate audio URL for each iframe page
-      const pageTitle = document.title; // Get the current iframe page's title
 
-      window.parent.postMessage({
-        action: 'changeAudio',
-        url: audioUrl,
-        title: pageTitle // Include the page title in the message
-      }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
+  <!-- Include hls.js from a CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var video = document.getElementById('video');
+        var videoSrc = '../images/location/liquor/liquor-01.m3u8'; // Replace with your HLS URL
+
+        if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = videoSrc;
+            video.addEventListener('loadedmetadata', function() {
+                video.play();
+            });
+        } else if (Hls.isSupported()) {
+            var hls = new Hls();
+            hls.loadSource(videoSrc);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                video.play();
+            });
+            hls.on(Hls.Events.ERROR, function(event, data) {
+                console.error('HLS.js Error:', data.fatal, data);
+            });
+        } else {
+            console.error('This browser does not support HLS.');
+        }
+    });
+
+    window.addEventListener('load', () => {
+        const audioUrl = 'sounds/glassy-01.m4a'; // Change this to the appropriate audio URL for each iframe page
+        const pageTitle = document.title; // Get the current iframe page's title
+
+        window.parent.postMessage({
+            action: 'changeAudio',
+            url: audioUrl,
+            title: pageTitle // Include the page title in the message
+        }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
     });
   </script>
 </body>

@@ -113,8 +113,8 @@
       { "text": "7-8" },
       { "text": "7-9" },
       { "text": "7-10" },
-      { "text": "7-11" },
-      { "text": "7-12" },
+      { "link": "location/liquor.html"},
+      { "link": "location/liquor.html"},
       { "text": "7-13" },
       { "text": "7-14" },
       { "text": "7-15" }
