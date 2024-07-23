@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="locstyle.css"> <!-- Link to external CSS file -->
   <style>
     #popup {
-      display: block; /* Visible by default */
+      display: none; /* Hidden by default */
       position: fixed;
       top: 0;
       left: 0;
@@ -85,22 +85,25 @@
       if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = videoSrc;
         video.addEventListener('loadedmetadata', function() {
-          video.pause(); // Start paused
+          video.play(); // Start video playback automatically
+        });
+        video.addEventListener('error', function() {
+          showError('Failed to play video');
         });
       } else if (Hls.isSupported()) {
         var hls = new Hls();
         hls.loadSource(videoSrc);
         hls.attachMedia(video);
         hls.on(Hls.Events.MANIFEST_PARSED, function() {
-          video.pause(); // Pause the video initially
+          video.play().catch(() => showError('Failed to play video'));
         });
         hls.on(Hls.Events.ERROR, function(event, data) {
           console.error('HLS.js Error:', data.fatal, data);
-          document.getElementById('errorMessage').innerText = `HLS.js Error: ${data.details}`;
+          showError(`HLS.js Error: ${data.details}`);
         });
       } else {
         console.error('This browser does not support HLS.');
-        document.getElementById('errorMessage').innerText = 'This browser does not support HLS.';
+        showError('This browser does not support HLS.');
       }
     });
 
@@ -112,6 +115,13 @@
         console.error('Failed to play video:', error);
         document.getElementById('errorMessage').innerText = `Failed to play video: ${error.message}`;
       });
+    }
+
+    function showError(message) {
+      const popup = document.getElementById('popup');
+      const errorMessage = document.getElementById('errorMessage');
+      errorMessage.innerText = message;
+      popup.style.display = 'block'; // Show popup with error
     }
 
     window.addEventListener('load', () => {
