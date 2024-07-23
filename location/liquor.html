@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="locstyle.css"> <!-- Link to external CSS file -->
   <style>
     #popup {
-      display: block; /* Hidden by default */
+      display: block; /* Visible by default */
       position: fixed;
       top: 0;
       left: 0;
@@ -41,7 +41,7 @@
   <div class="container">
     <div class="grid">
       <div class="image-row">
-        <video id="video" muted playsinline autoplay loop></video>
+        <video id="video" muted playsinline loop></video>
       </div>
       <div class="text-row">
         <p>
@@ -85,11 +85,7 @@
       if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = videoSrc;
         video.addEventListener('loadedmetadata', function() {
-          video.play().catch(error => {
-            console.error('Autoplay failed:', error);
-            document.getElementById('errorMessage').innerText = `Autoplay failed: ${error.message}`;
-            document.getElementById('popup').style.display = 'block';
-          });
+          video.pause(); // Start paused
         });
       } else if (Hls.isSupported()) {
         var hls = new Hls();
