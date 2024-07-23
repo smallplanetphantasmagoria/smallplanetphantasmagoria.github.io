@@ -6,31 +6,35 @@
   <title>Liquor Shop | Small Planet Phantasmagoria</title>
   <link rel="stylesheet" href="locstyle.css"> <!-- Link to external CSS file -->
   <style>
-            #popup {
-            display: none; /* Hidden by default */
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            text-align: center;
-            padding-top: 20%;
-            font-size: 20px;
-        }
-        #popup button {
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            padding: 15px 32px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin-top: 20px;
-            cursor: pointer;
-        }
+    #popup {
+      display: block; /* Hidden by default */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      text-align: center;
+      padding-top: 20%;
+      font-size: 20px;
+    }
+    #popup button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    #errorMessage {
+      color: red;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -44,8 +48,8 @@
           <span style="font-size: 24px;">Liquor Shop</span>
           <br>
           <br>
-            Coming soon.
-        <br>
+          Coming soon.
+          <br>
         </p>
       </div>
       <div class="navigation">
@@ -63,66 +67,66 @@
       </div>
     </div>
   </div>
-  
+
   <div id="popup">
     <p>Tap to start the video</p>
     <button onclick="startVideo()">Start Video</button>
-</div>
+    <div id="errorMessage"></div>
+  </div>
 
   <!-- Include hls.js from a CDN -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-        var video = document.getElementById('video');
-        var videoSrc = '../images/location/liquor/liquor-01.m3u8'; // Replace with your HLS URL
+      var video = document.getElementById('video');
+      var videoSrc = '../images/location/liquor/liquor-01.m3u8'; // Replace with your HLS URL
 
-        if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            video.src = videoSrc;
-            video.addEventListener('loadedmetadata', function() {
-                video.play();
-            });
-        } else if (Hls.isSupported()) {
-            var hls = new Hls();
-            hls.loadSource(videoSrc);
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                video.pause();
-            });
-            hls.on(Hls.Events.ERROR, function(event, data) {
-                console.error('HLS.js Error:', data.fatal, data);
-            });
-        } else {
-            console.error('This browser does not support HLS.');
-        }
-    
-        const video1 = document.getElementById('video');
-            video1.muted = true;
-            video1.play().catch(error => {
-                console.error('Autoplay failed:', error);
-                document.getElementById('popup').style.display = 'block';
-            });    
-    
+      if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = videoSrc;
+        video.addEventListener('loadedmetadata', function() {
+          video.play().catch(error => {
+            console.error('Autoplay failed:', error);
+            document.getElementById('errorMessage').innerText = `Autoplay failed: ${error.message}`;
+            document.getElementById('popup').style.display = 'block';
+          });
+        });
+      } else if (Hls.isSupported()) {
+        var hls = new Hls();
+        hls.loadSource(videoSrc);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, function() {
+          video.pause(); // Pause the video initially
+        });
+        hls.on(Hls.Events.ERROR, function(event, data) {
+          console.error('HLS.js Error:', data.fatal, data);
+          document.getElementById('errorMessage').innerText = `HLS.js Error: ${data.details}`;
+        });
+      } else {
+        console.error('This browser does not support HLS.');
+        document.getElementById('errorMessage').innerText = 'This browser does not support HLS.';
+      }
+    });
+
+    function startVideo() {
+      const video = document.getElementById('video');
+      video.play().then(() => {
+        document.getElementById('popup').style.display = 'none';
+      }).catch(error => {
+        console.error('Failed to play video:', error);
+        document.getElementById('errorMessage').innerText = `Failed to play video: ${error.message}`;
       });
-
-      function startVideo() {
-            const video1 = document.getElementById('video');
-            video.play().then(() => {
-                document.getElementById('popup').style.display = 'none';
-            }).catch(error => {
-                console.error('Failed to play video:', error);
-            });
-        }
+    }
 
     window.addEventListener('load', () => {
-        const audioUrl = 'sounds/glassy-01.m4a'; // Change this to the appropriate audio URL for each iframe page
-        const pageTitle = document.title; // Get the current iframe page's title
+      const audioUrl = 'sounds/glassy-01.m4a'; // Change this to the appropriate audio URL for each iframe page
+      const pageTitle = document.title; // Get the current iframe page's title
 
-        window.parent.postMessage({
-            action: 'changeAudio',
-            url: audioUrl,
-            title: pageTitle // Include the page title in the message
-        }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
+      window.parent.postMessage({
+        action: 'changeAudio',
+        url: audioUrl,
+        title: pageTitle // Include the page title in the message
+      }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
     });
   </script>
 </body>
