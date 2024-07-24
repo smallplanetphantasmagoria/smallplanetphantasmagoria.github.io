@@ -44,32 +44,66 @@
         }
 
         .control-button {
-            background-color: #44444400;
+            background-color: #252525;
             border: none;
             color: white;
             cursor: pointer;
-            width: 50px;
-            height: 50px;
+            width: 30px;
+            height: 30px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        @media (min-aspect-ratio: 1/1) OR (max-width > 500px) {
+        .horizontal-refresh-container {
+            display: none;
+            justify-content: center;
+            width: 100%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -20px;
+        }
+
+        .refresh-button-container-bottom-right {
+            display: none;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+        }
+
+        @media (min-aspect-ratio: 1/1) {
             .outer-container {
                 flex-direction: row;
+                justify-content: center;
+                align-items: center;
             }
 
             .horizontal-buttons {
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
-                height: 100%;
                 margin: 0 20px;
+            }
+
+            @media (min-height: 550px) {
+                .horizontal-refresh-container {
+                    display: flex;
+                }
+            }
+
+            @media (max-height: 549px) {
+                .horizontal-refresh-container {
+                    display: none;
+                }
+
+                .refresh-button-container-bottom-right {
+                    display: flex;
+                }
             }
         }
 
-        @media (max-aspect-ratio: 1/1) OR (max-width <= 500px) {
+        @media (max-aspect-ratio: 1/1) {
             .outer-container {
                 flex-direction: column;
             }
@@ -77,29 +111,69 @@
             .vertical-buttons {
                 display: flex;
                 justify-content: center;
-                margin-top: 20px;
+                align-items: center;
+                margin-top: 10px;
                 width: 100%;
             }
 
             .vertical-buttons .control-button {
                 margin: 0 10px;
             }
+
+            .horizontal-refresh-container {
+                display: none; /* Hide horizontal refresh buttons in vertical mode */
+            }
+
+            .refresh-button-container-bottom-right {
+                display: none; /* Hide horizontal refresh buttons in vertical mode */
+            }
+
+            .vertical-buttons .control-button:nth-child(1) {
+                order: 1;
+            }
+
+            .vertical-buttons .refresh-button {
+                order: 2; /* Position the refresh button in the middle */
+            }
+
+            .vertical-buttons .control-button:nth-child(3) {
+                order: 3;
+            }
+        }
+
+        .frame-info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
         }
     </style>
 </head>
 <body>
+    <div class="frame-info" id="frameInfo">Frame: 0</div>
     <div class="outer-container">
         <div class="horizontal-buttons">
             <button class="control-button" id="leftButtonHorizontal">&#9664;</button>
         </div>
         <div class="canvas-container">
             <canvas id="globeCanvas"></canvas>
+            <div class="horizontal-refresh-container">
+                <button class="control-button refresh-button" id="refreshButton">&#x21bb;</button>
+            </div>
         </div>
         <div class="horizontal-buttons">
             <button class="control-button" id="rightButtonHorizontal">&#9654;</button>
         </div>
+        <div class="refresh-button-container-bottom-right">
+            <button class="control-button refresh-button" id="refreshButtonBottomRight">&#x21bb;</button>
+        </div>
         <div class="vertical-buttons">
             <button class="control-button" id="leftButtonVertical">&#9664;</button>
+            <button class="control-button refresh-button" id="refreshButtonVertical">&#x21bb;</button>
             <button class="control-button" id="rightButtonVertical">&#9654;</button>
         </div>
     </div>

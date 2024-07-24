@@ -1,12 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('globeCanvas');
     const ctx = canvas.getContext('2d');
-    const leftButtonHorizontal = document.getElementById('leftButtonHorizontal');
-    const rightButtonHorizontal = document.getElementById('rightButtonHorizontal');
-    const leftButtonVertical = document.getElementById('leftButtonVertical');
-    const rightButtonVertical = document.getElementById('rightButtonVertical');
+    const frameInfo = document.getElementById('frameInfo');
 
-    let currentFrame = 0;
+    let currentFrame = 1;  // Start at frame 1
     const totalFrames = 150;
     const frameWidth = 350;
     const frameHeight = 350;
@@ -14,151 +11,101 @@ document.addEventListener('DOMContentLoaded', () => {
     const spriteSheet = new Image();
     spriteSheet.src = 'sprite.webp';
 
-    let initialAnimationInterval;
-    let buttonAnimationInterval;
-    let holdTimeout;
-    let shouldStop = false;
     const initialFrameInterval = 1000 / 16;  // 16 fps for initial animation
     const buttonFrameInterval = 1000 / 32;  // 32 fps for button press animation
-    const debounceInterval = 1000 / 100;  // Debounce interval for key presses
-    let isAnimating = false;
+    let animationInterval;
+    let animationDirection = 1; // 1 for forward, -1 for backward
+    let isAnimating = false; // Flag to track if animation is running
+    let keyPressed = false; // Flag to track if a key is pressed
 
     function resizeCanvas() {
-        canvas.width = canvas.parentNode.offsetWidth;
-        canvas.height = canvas.parentNode.offsetHeight;
+        const size = Math.min(canvas.parentNode.offsetWidth, canvas.parentNode.offsetHeight);
+        canvas.width = size;
+        canvas.height = size;
         drawFrame(currentFrame);
     }
 
     function drawFrame(frameIndex) {
-        const x = (frameIndex % cols) * frameWidth;
-        const y = Math.floor(frameIndex / cols) * frameHeight;
+        const x = ((frameIndex - 1) % cols) * frameWidth;
+        const y = Math.floor((frameIndex - 1) / cols) * frameHeight;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.imageSmoothingEnabled = false;
         ctx.drawImage(spriteSheet, x, y, frameWidth, frameHeight, 0, 0, canvas.width, canvas.height);
+
+        // Update frame info
+        frameInfo.textContent = `Frame: ${frameIndex}`;
     }
 
-    function updateFrame(delta) {
-        currentFrame = (currentFrame + delta + totalFrames) % totalFrames;
-        drawFrame(currentFrame);
-    }
+    function startAnimation(forward = true, interval = initialFrameInterval) {
+        clearInterval(animationInterval);  // Clear any existing interval
+        animationDirection = forward ? 1 : -1;
 
-    function animateFrames(delta) {
-        if (isAnimating) return;
+        if (isAnimating && interval === buttonFrameInterval) {
+            animationInterval = setInterval(() => {
+                currentFrame = (currentFrame + animationDirection - 1 + totalFrames) % totalFrames + 1;
+                drawFrame(currentFrame);
+            }, interval);
+            return; // Prevent starting multiple button animations
+        }
+
         isAnimating = true;
-        clearInterval(buttonAnimationInterval);
-        clearInterval(initialAnimationInterval); // Stop the initial animation
-        shouldStop = false;
-        buttonAnimationInterval = setInterval(() => {
-            updateFrame(delta);
-            if (shouldStop && currentFrame % 5 === 0) {
-                clearInterval(buttonAnimationInterval);
-                isAnimating = false;
-            }
-        }, buttonFrameInterval);
-    }
-
-    function animateNext10Frames(delta) {
-        let frameCount = 0;
-        clearInterval(buttonAnimationInterval);
-        clearInterval(initialAnimationInterval); // Ensure initial animation stops
-        buttonAnimationInterval = setInterval(() => {
-            if (frameCount < 10) {
-                updateFrame(delta);
-                frameCount++;
-            } else {
-                stopAnimationOnMultipleOf5(delta);
-            }
-        }, buttonFrameInterval);
-    }
-
-    function stopAnimationOnMultipleOf5(delta) {
-        clearInterval(buttonAnimationInterval);
-        buttonAnimationInterval = setInterval(() => {
-            updateFrame(delta);
-            if (currentFrame % 5 === 0) {
-                clearInterval(buttonAnimationInterval);
-                isAnimating = false;
-            }
-        }, buttonFrameInterval);
-    }
-
-    function startInitialAnimation() {
-        initialAnimationInterval = setInterval(() => {
-            updateFrame(1);
-        }, initialFrameInterval);
+        animationInterval = setInterval(() => {
+            currentFrame = (currentFrame + animationDirection - 1 + totalFrames) % totalFrames + 1;
+            drawFrame(currentFrame);
+        }, interval);
     }
 
     function stopAnimation() {
-        shouldStop = true;
+        clearInterval(animationInterval);
+
+        animationInterval = setInterval(() => {
+            currentFrame = (currentFrame + animationDirection - 1 + totalFrames) % totalFrames + 1;
+            drawFrame(currentFrame);
+
+            if (currentFrame % 5 === 0 || currentFrame === 1) {
+                clearInterval(animationInterval);
+                isAnimating = false; // Reset the flag
+            }
+        }, buttonFrameInterval);
     }
-
-    function addButtonHoldListeners(button, delta) {
-        const hammer = new Hammer(button);
-        hammer.on('tap', () => {
-            clearInterval(buttonAnimationInterval); // Ensure any ongoing animation is stopped
-            animateNext10Frames(delta);
-        });
-        button.addEventListener('mousedown', () => {
-            clearInterval(buttonAnimationInterval); // Ensure any ongoing animation is stopped
-            animateFrames(delta);
-        });
-        button.addEventListener('mouseup', stopAnimation);
-        button.addEventListener('mouseleave', stopAnimation);
-    }
-
-    function debounce(func, delay) {
-        let debounceTimer;
-        return function () {
-            const context = this;
-            const args = arguments;
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-                func.apply(context, args);
-            }, delay);
-        };
-    }
-
-    function handleKeyDown(event) {
-        if (event.key === 'ArrowLeft') {
-            animateFrames(-1);
-        } else if (event.key === 'ArrowRight') {
-            animateFrames(1);
-        }
-    }
-
-    function handleKeyUp(event) {
-        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-            stopAnimation();
-        }
-    }
-
-    document.addEventListener('keydown', debounce(handleKeyDown, debounceInterval));
-    document.addEventListener('keyup', handleKeyUp);
-
-    addButtonHoldListeners(leftButtonHorizontal, -1);
-    addButtonHoldListeners(rightButtonHorizontal, 1);
-    addButtonHoldListeners(leftButtonVertical, -1);
-    addButtonHoldListeners(rightButtonVertical, 1);
-
-    // Touch interaction with Hammer.js
-    const hammerCanvas = new Hammer(canvas);
-
-    hammerCanvas.get('swipe').set({ direction: Hammer.DIRECTION_HORIZONTAL });
-
-    hammerCanvas.on('swipeleft', () => {
-        clearInterval(buttonAnimationInterval); // Ensure any ongoing animation is stopped
-        animateNext10Frames(1);
-    });
-
-    hammerCanvas.on('swiperight', () => {
-        clearInterval(buttonAnimationInterval); // Ensure any ongoing animation is stopped
-        animateNext10Frames(-1);
-    });
 
     spriteSheet.onload = () => {
         resizeCanvas(); // Initial draw
+        drawFrame(currentFrame); // Ensure initial frame is drawn
         window.addEventListener('resize', resizeCanvas);
-        startInitialAnimation(); // Start initial animation at 16fps
+        startAnimation(true, initialFrameInterval); // Start initial animation at 16fps
     };
+
+    // Event listeners for horizontal buttons
+    document.getElementById('leftButtonHorizontal').addEventListener('mousedown', () => startAnimation(false, buttonFrameInterval));
+    document.getElementById('rightButtonHorizontal').addEventListener('mousedown', () => startAnimation(true, buttonFrameInterval));
+    document.getElementById('leftButtonHorizontal').addEventListener('mouseup', stopAnimation);
+    document.getElementById('rightButtonHorizontal').addEventListener('mouseup', stopAnimation);
+
+    // Event listeners for vertical buttons
+    document.getElementById('leftButtonVertical').addEventListener('mousedown', () => startAnimation(false, buttonFrameInterval));
+    document.getElementById('rightButtonVertical').addEventListener('mousedown', () => startAnimation(true, buttonFrameInterval));
+    document.getElementById('leftButtonVertical').addEventListener('mouseup', stopAnimation);
+    document.getElementById('rightButtonVertical').addEventListener('mouseup', stopAnimation);
+
+    // Event listeners for refresh buttons
+    document.getElementById('refreshButton').addEventListener('click', () => startAnimation(true, initialFrameInterval));
+    document.getElementById('refreshButtonVertical').addEventListener('click', () => startAnimation(true, initialFrameInterval));
+    document.getElementById('refreshButtonBottomRight').addEventListener('click', () => startAnimation(true, initialFrameInterval));
+
+    // Event listeners for keyboard buttons
+    document.addEventListener('keydown', (event) => {
+        if ((event.key === 'ArrowLeft' || event.key === 'ArrowRight') && !keyPressed) {
+            keyPressed = true;
+            startAnimation(event.key === 'ArrowRight', buttonFrameInterval);
+        }
+    });
+
+    document.addEventListener('keyup', (event) => {
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+            keyPressed = false;
+            stopAnimation();
+        }
+    });
 });
