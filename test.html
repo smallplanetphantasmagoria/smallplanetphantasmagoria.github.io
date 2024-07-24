@@ -2,19 +2,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=constrain">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Interactive Globe</title>
     <style>
-        body, html {
+
+        /* Viewport Settings */
+        html, body {
             margin: 0;
             padding: 0;
-            height: 100vh;
-            width: 100vw;
+            height: 100%;
+            width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
             background-color: #000;
-            overflow: hidden;
+            overflow: hidden; /* Prevent scrollbars */
+            touch-action: manipulation; /* Prevent accidental zooming */
+            -webkit-overflow-scrolling: touch; /* Enable smooth scrolling on iOS */
+            user-select: none; /* Prevent text selection */
+            -webkit-user-select: none; /* Prevent text selection on iOS */
+            -webkit-touch-callout: none; /* Prevent callout to copy image, etc when tap to hold */
+            -webkit-tap-highlight-color: transparent; /* Remove button highlight on tap */
+        }
+
+        body {
+            -webkit-backface-visibility: hidden; /* Prevent flickering */
+            -webkit-touch-callout: none; /* Prevent callout to copy image, etc when tap to hold */
         }
 
         .outer-container {
@@ -24,6 +40,7 @@
             justify-content: center;
             width: 100%;
             height: 100%;
+            
         }
 
         .canvas-container {
@@ -53,6 +70,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            user-select: none; /* Prevent text selection */
+            -webkit-user-select: none; /* Prevent text selection on iOS */
+            -webkit-touch-callout: none; /* Prevent callout to copy image, etc when tap to hold */
+            -webkit-tap-highlight-color: transparent; /* Remove button highlight on tap */
+        }
+
+        .control-button:active {
+            background-color: #444; /* Provide visual feedback during button press */
         }
 
         .horizontal-refresh-container {
@@ -150,6 +175,8 @@
             padding: 5px 10px;
             border-radius: 5px;
             font-family: Arial, sans-serif;
+            user-select: none; /* Prevent text selection */
+            -webkit-user-select: none; /* Prevent text selection on iOS */
         }
     </style>
 </head>
@@ -178,6 +205,5 @@
         </div>
     </div>
     <script src="script.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 </body>
 </html>
