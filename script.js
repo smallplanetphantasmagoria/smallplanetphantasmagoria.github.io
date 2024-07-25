@@ -29,15 +29,15 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             imageIndex: 10, // Frame index starts from 1
             areas: [
-                { x: 0, y: 0, width: 100, height: 100, href: 'locations/altair.html' },
-                { x: 250, y: 250, width: 100, height: 100, href: 'locations/bakery.html' }
+                { x: 0, y: 0, width: 100, height: 100, href: 'location/altair.html' },
+                { x: 250, y: 250, width: 100, height: 100, href: 'location/bakery.html' }
             ]
         },
         {
             imageIndex: 20,
             areas: [
-                { x: 0, y: 250, width: 100, height: 100, href: 'locations/cinema.html' },
-                { x: 250, y: 0, width: 100, height: 100, href: 'locations/liquor.html' }
+                { x: 0, y: 250, width: 100, height: 100, href: 'location/cinema.html' },
+                { x: 250, y: 0, width: 100, height: 100, href: 'location/liquor.html' }
             ]
         }
         // Add more frames and their areas as needed
