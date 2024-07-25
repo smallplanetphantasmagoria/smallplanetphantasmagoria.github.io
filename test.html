@@ -47,8 +47,8 @@
             position: relative;
             width: 100vmin;
             height: 100vmin;
-            max-width: 500px;
-            max-height: 500px;
+            max-width: 600px;
+            max-height: 600px;
         }
 
         #globeCanvas {
@@ -76,7 +76,7 @@
             -webkit-user-select: none; /* Prevent text selection on iOS */
             -webkit-touch-callout: none; /* Prevent callout to copy image, etc when tap to hold */
             -webkit-tap-highlight-color: transparent; /* Remove button highlight on tap */
-            opacity: 0.2;
+            opacity: 0.1;
             transition: opacity 0.2s;
         }
         .control-button:hover {
@@ -117,13 +117,13 @@
                 margin: 0 20px;
             }
 
-            @media (min-height: 550px) {
+            @media (min-height: 650px) {
                 .horizontal-refresh-container {
                     display: flex;
                 }
             }
 
-            @media (max-height: 549px) {
+            @media (max-height: 649px) {
                 .horizontal-refresh-container {
                     display: none;
                 }
