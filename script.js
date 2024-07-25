@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sensitivityFactor = 40;  // Adjusted for less frames cycled per unit distance
     const inertiaBaseFactor = 1500; // Base factor for inertia calculation
     const maxFrameChange = 150; // Maximum frames to cycle due to inertia
-    let currentFrame = 5;  // Start at frame 5
+    let currentFrame = 10;  // Start at frame 5
     let animationInterval;
     let animationDirection = 1; // 1 for forward, -1 for backward
     let isAnimating = false; // Flag to track if animation is running
@@ -22,10 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastScrollTime = 0;
     const spriteSheet = new Image();
     spriteSheet.src = 'sprite.webp';
-    let touchStartX = 0;
-    let touchStartTime = 0;
-    let touchCurrentX = 0;
-    let ignoreFirstTouch = true;
 
     // Initialize
     spriteSheet.onload = () => {
@@ -33,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
         drawFrame(currentFrame); // Ensure initial frame is drawn
         window.addEventListener('resize', resizeCanvas);
         startAnimation(true, initialFrameInterval); // Start initial animation at 16fps
-        addTouchGestures(); // Add touch gestures
     };
 
     // Resize Canvas
@@ -84,23 +79,23 @@ document.addEventListener('DOMContentLoaded', () => {
             currentFrame = (currentFrame + direction - 1 + totalFrames) % totalFrames + 1;
             drawFrame(currentFrame);
 
-            // Stop on next multiple of 5 in the correct direction
-            if (currentFrame % 5 === 0) {
+            // Stop on next multiple of 10 in the correct direction
+            if (currentFrame % 10 === 0) {
                 clearInterval(animationInterval);
                 isAnimating = false; // Reset the flag
             }
         }, buttonFrameInterval);
     }
 
-    // Stop Animation at Nearest Multiple of 5 in the Correct Direction
+    // Stop Animation at Nearest Multiple of 10 in the Correct Direction
     function stopAnimationNearest(direction) {
         clearInterval(animationInterval);
         animationInterval = setInterval(() => {
             currentFrame = (currentFrame + direction - 1 + totalFrames) % totalFrames + 1;
             drawFrame(currentFrame);
 
-            // Ensure stopping on next multiple of 5 in the correct direction
-            if (currentFrame % 5 === 0) {
+            // Ensure stopping on next multiple of 10 in the correct direction
+            if (currentFrame % 10 === 0) {
                 clearInterval(animationInterval);
                 isAnimating = false; // Reset the flag
             }
@@ -137,76 +132,8 @@ document.addEventListener('DOMContentLoaded', () => {
         currentFrame = (currentFrame + delta - 1 + totalFrames) % totalFrames + 1;
         drawFrame(currentFrame);
 
-        // Ensure the animation stops on multiples of 5
+        // Ensure the animation stops on multiples of 10
         stopAnimationNearest(delta);
-    }
-
-    // Handle Touch Start
-    function handleTouchStart(event) {
-        if (ignoreFirstTouch) {
-            ignoreFirstTouch = false;
-            return;
-        }
-        touchStartX = event.touches[0].clientX;
-        touchStartTime = Date.now();
-        touchCurrentX = touchStartX;
-        clearInterval(animationInterval);
-    }
-
-    // Handle Touch Move
-    function handleTouchMove(event) {
-        touchCurrentX = event.touches[0].clientX;
-        let delta = touchCurrentX - touchStartX;
-
-        if (Math.abs(delta) > 20) { // Ignore tiny movements
-            // Cap the gesture distance for calculation
-            delta = Math.max(-maxGestureDistance, Math.min(maxGestureDistance, delta));
-            let frameDelta = Math.round(delta / sensitivityFactor); // Adjusted for finer control
-            currentFrame = (currentFrame + frameDelta + totalFrames) % totalFrames + 1;
-            drawFrame(currentFrame);
-        }
-    }
-
-    // Handle Touch End with Enhanced Inertia
-    function handleTouchEnd() {
-        const delta = touchCurrentX - touchStartX;
-        const timeElapsed = Date.now() - touchStartTime;
-        if (Math.abs(delta) > 20) { // Ignore tiny movements
-            const direction = delta < 0 ? -1 : 1;
-            const velocity = Math.abs(delta) / timeElapsed;
-            const inertiaFrames = Math.min(maxFrameChange, Math.round(velocity * inertiaBaseFactor / sensitivityFactor)); // Enhanced inertia based on velocity
-
-            let framesToAnimate = Math.max(5, inertiaFrames); // Ensure at least 5 frames for inertia
-            let frameDelta = direction * framesToAnimate;
-
-            clearInterval(animationInterval);
-            animationInterval = setInterval(() => {
-                currentFrame = (currentFrame + direction - 1 + totalFrames) % totalFrames + 1;
-                drawFrame(currentFrame);
-                framesToAnimate--;
-
-                if (framesToAnimate <= 0 || currentFrame % 5 === 0) {
-                    clearInterval(animationInterval);
-                    isAnimating = false; // Reset the flag
-                }
-            }, buttonFrameInterval);
-        }
-    }
-
-    // Add touch gestures
-    function addTouchGestures() {
-        canvas.addEventListener('touchstart', handleTouchStart);
-        canvas.addEventListener('touchmove', handleTouchMove);
-        canvas.addEventListener('touchend', handleTouchEnd);
-
-        const buttons = document.querySelectorAll('.control-button');
-        buttons.forEach(button => {
-            button.addEventListener('touchstart', () => {
-                const direction = button.id.includes('left') ? false : true;
-                startAnimation(direction, buttonFrameInterval);
-            });
-            button.addEventListener('touchend', () => stopAnimationNearest(button.id.includes('left') ? -1 : 1));
-        });
     }
 
     // Add event listeners
@@ -236,10 +163,13 @@ document.addEventListener('DOMContentLoaded', () => {
         canvas.addEventListener('wheel', handleScroll);
 
         // Tap on canvas to stop animation
+        if (isAnimating = true) {
         canvas.addEventListener('click', () => {
-            clearInterval(animationInterval);
+            clearInterval(animationInterval);  // Clear any existing interval
+
+            stopAnimation();
         });
-    }
+        }}
 
     // Add event listeners
     addEventListeners();
