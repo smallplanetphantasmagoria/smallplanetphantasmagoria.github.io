@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Coordinate Adjuster and Clickable Areas Converter</title>
+</head>
+<body>
+    <h1>SVG Coordinate Adjuster and Clickable Areas Converter</h1>
+    <textarea id="svgInput" rows="10" cols="50" placeholder="Paste your SVG content here"></textarea><br>
+    <button onclick="adjustAndConvertSVG()">Adjust and Convert SVG</button>
+    <h2>Adjusted SVG</h2>
+    <textarea id="adjustedSvgOutput" rows="10" cols="50"></textarea>
+    <h2>Raw Points</h2>
+    <pre id="rawPointsOutput"></pre>
+    <h2>Clickable Areas Array</h2>
+    <pre id="clickableAreasOutput"></pre>
+
+    <script>
+        function adjustCoordinates(svgContent) {
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(svgContent, "image/svg+xml");
+
+            const gElement = xmlDoc.querySelector('g[transform]');
+            if (gElement) {
+                const transformMatch = gElement.getAttribute('transform').match(/translate\((-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)\)/);
+                if (transformMatch) {
+                    const translateX = parseFloat(transformMatch[1]);
+                    const translateY = parseFloat(transformMatch[3]);
+
+                    const paths = gElement.querySelectorAll('path');
+                    paths.forEach(path => {
+                        const d = path.getAttribute('d');
+                        const adjustedD = d.replace(/([MLHVCSQTAZ])\s*(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)/g, (match, command, x, xDecimal, y, yDecimal) => {
+                            const adjustedX = parseFloat(x) + translateX;
+                            const adjustedY = parseFloat(y) + translateY;
+                            return `${command} ${adjustedX},${adjustedY}`;
+                        });
+                        path.setAttribute('d', adjustedD);
+                    });
+
+                    gElement.removeAttribute('transform');
+                }
+            }
+
+            const serializer = new XMLSerializer();
+            return serializer.serializeToString(xmlDoc);
+        }
+
+        function parseSVG(svgContent) {
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(svgContent, "image/svg+xml");
+
+            const paths = xmlDoc.getElementsByTagName('path');
+            const clickableAreas = [];
+
+            for (let i = 0; i < paths.length; i++) {
+                const path = paths[i];
+                const d = path.getAttribute('d');
+                const points = parsePathData(d);
+
+                clickableAreas.push({
+                    id: path.id,
+                    points: points,
+                    href: path.getAttribute('data-href') || null
+                });
+            }
+
+            return clickableAreas;
+        }
+
+        function parsePathData(d) {
+            const pathCommands = d.match(/[MLHVCSQTAZ][^MLHVCSQTAZ]*/gi);
+            const points = [];
+            let currentPoint = { x: 0, y: 0 };
+
+            pathCommands.forEach(command => {
+                const type = command[0];
+                const args = command.slice(1).trim().split(/[\s,]+/).map(Number);
+
+                switch (type) {
+                    case 'M':
+                    case 'L':
+                        for (let i = 0; i < args.length; i += 2) {
+                            currentPoint = { x: args[i], y: args[i + 1] };
+                            points.push(currentPoint);
+                        }
+                        break;
+                    case 'm':
+                    case 'l':
+                        for (let i = 0; i < args.length; i += 2) {
+                            currentPoint = { x: currentPoint.x + args[i], y: currentPoint.y + args[i + 1] };
+                            points.push(currentPoint);
+                        }
+                        break;
+                    case 'H':
+                        args.forEach(arg => {
+                            currentPoint = { x: arg, y: currentPoint.y };
+                            points.push(currentPoint);
+                        });
+                        break;
+                    case 'h':
+                        args.forEach(arg => {
+                            currentPoint = { x: currentPoint.x + arg, y: currentPoint.y };
+                            points.push(currentPoint);
+                        });
+                        break;
+                    case 'V':
+                        args.forEach(arg => {
+                            currentPoint = { x: currentPoint.x, y: arg };
+                            points.push(currentPoint);
+                        });
+                        break;
+                    case 'v':
+                        args.forEach(arg => {
+                            currentPoint = { x: currentPoint.x, y: currentPoint.y + arg };
+                            points.push(currentPoint);
+                        });
+                        break;
+                    case 'Z':
+                    case 'z':
+                        break;
+                    default:
+                        console.warn(`Unsupported path command: ${type}`);
+                        break;
+                }
+            });
+
+            return points;
+        }
+
+        function convertToRawPoints(parsedSVG) {
+            const rawPoints = {};
+            parsedSVG.forEach(area => {
+                rawPoints[area.id] = area.points.map(point => ({ x: point.x, y: point.y }));
+            });
+            return rawPoints;
+        }
+
+        function updateHrefs(clickableAreas) {
+            clickableAreas.forEach(area => {
+                if (area.href === null) {
+                    area.href = `location/${area.id}.html`;
+                }
+            });
+        }
+
+        function adjustAndConvertSVG() {
+            const svgContent = document.getElementById('svgInput').value;
+            const adjustedSVGContent = adjustCoordinates(svgContent);
+            document.getElementById('adjustedSvgOutput').value = adjustedSVGContent;
+
+            const parsedSVG = parseSVG(adjustedSVGContent);
+            updateHrefs(parsedSVG);
+            const rawPoints = convertToRawPoints(parsedSVG);
+
+            document.getElementById('clickableAreasOutput').textContent = JSON.stringify(parsedSVG, null, 2);
+        }
+    </script>
+</body>
+</html>

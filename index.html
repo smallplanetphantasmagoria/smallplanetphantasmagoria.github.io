@@ -19,19 +19,31 @@
     @media only screen and (max-width: 610px) {
       .bottom-right-container {
         display: none;
-        }
+      }
     }
-    
-    body {
+  
+    html, body {
       margin: 0;
       padding: 0;
-      overflow: hidden; /* Prevent scrollbars in the main page */
+      width: 100%;
+      height: 100%;
+      overflow: hidden; /* Prevent scrollbars */
+      touch-action: manipulation; /* Prevent accidental zooming */
+      -webkit-overflow-scrolling: touch; /* Enable smooth scrolling on iOS */
+      user-select: none; /* Prevent text selection */
+      -webkit-user-select: none; /* Prevent text selection on iOS */
+      -webkit-touch-callout: none; /* Prevent callout to copy image, etc when tap to hold */
+      -webkit-tap-highlight-color: transparent; /* Remove button highlight on tap */
+    }
+  
+    body {
       display: flex;
       flex-direction: column;
-      height: 100vh;
       position: relative; /* Position for absolute children */
+      pointer-events: auto;
+      background-color: #000;
     }
-
+  
     iframe {
       border: none; /* Remove iframe border */
       width: 100%; /* Full width */
@@ -41,79 +53,55 @@
       left: 0;
       background: black; /* Background color */
     }
-
+  
     img {
       /* Disable image smoothing/anti-aliasing */
-      image-rendering: optimizeSpeed;             /* STOP SMOOTHING, GIVE ME SPEED  */
-      image-rendering: -moz-crisp-edges;          /* Firefox                        */
-      image-rendering: -o-crisp-edges;            /* Opera                          */
+      image-rendering: optimizeSpeed; /* STOP SMOOTHING, GIVE ME SPEED */
+      image-rendering: -moz-crisp-edges; /* Firefox */
+      image-rendering: -o-crisp-edges; /* Opera */
       image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
-      image-rendering: pixelated;                 /* Universal support since 2021   */
-      image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
-      -ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
+      image-rendering: pixelated; /* Universal support since 2021 */
+      image-rendering: optimize-contrast; /* CSS3 Proposed */
+      -ms-interpolation-mode: nearest-neighbor; /* IE8+ */
     }
-
+  
     .bottom-right-container {
-      position: absolute; /* Position in bottom-right corner */
-      bottom: 10px;
-      right: 40px;
-      background: #00000000; /* Black background */
-      border: solid 10px #00000000;
+      position: fixed; /* Fixed position to stay in the viewport */
+      bottom: 20px;
+      right: 20px;
+      background: #00000000; /* Transparent background */
+      border: solid 0px #00000000; /* Transparent border */
       color: white; /* White text */
       padding: 0; /* No padding */
       z-index: 40001; /* Ensure above iframe */
       display: flex;
       align-items: center; /* Center items vertically */
     }
-
-.audio-player {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 50px;
-  height: 50px;
-  background: rgb(49, 49, 49);
-  cursor: pointer;
-  margin-right: 10px;
-  flex-shrink: 0;
-  transition: 0.2s;
-  transform: translateY(-2px);
-}
-
-.audio-player:hover {
-  background: gray;
-}
-
-.audio-player svg {
-  width: 30px;
-  height: 30px;
-  fill: rgb(0, 0, 0);
-}
-.audio-player {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 50px;
-  height: 50px;
-  background: rgb(49, 49, 49);
-  cursor: pointer;
-  margin-right: 10px;
-  flex-shrink: 0;
-  transition: 0.2s;
-  transform: translateY(-2px);
-}
-
-.audio-player:hover {
-  background: gray;
-}
-
-.audio-player svg {
-  width: 30px;
-  height: 30px;
-  fill: rgb(0, 0, 0);
-}
-
-
+  
+    .audio-player {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: rgb(49, 49, 49);
+      cursor: pointer;
+      margin-right: 10px;
+      flex-shrink: 0;
+      transition: 0.2s;
+      transform: translateY(-2.5px);
+    }
+  
+    .audio-player:hover {
+      background: gray;
+    }
+  
+    .audio-player svg {
+      width: 30px;
+      height: 30px;
+      fill: rgb(0, 0, 0);
+    }
+  
     .menu {
       display: flex;
       align-items: center;
@@ -122,13 +110,13 @@
       transition: 0.5s; /* Smooth transition for filter */
       flex-shrink: 0;
     }
-
+  
     .menu-img {
-      width: 50px;
-      height: 50px;
+      width: 40px;
+      height: 40px;
       transition: 0.2s; /* Smooth transition for image */
     }
-
+  
     .menu .tooltiptext {
       visibility: hidden;
       width: 53px;
@@ -147,7 +135,7 @@
       opacity: 0;
       transition: opacity 0.2s; /* Fade transition for tooltip */
     }
-
+  
     .menu .tooltiptext::after {
       content: "";
       position: absolute;
@@ -158,56 +146,48 @@
       border-style: solid;
       border-color: #fff transparent transparent transparent; /* Tooltip arrow */
     }
-
+  
     .menu:hover {
       filter: grayscale(0%) brightness(100%); /* Remove grayscale and increase brightness on hover */
       transition: 0.2s;
     }
-
+  
     /* Splash Screen Styles */
     .splash-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: black;
-      z-index: 40000; /* Higher than landing page but lower than iframe */
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100vmin;
+      height: 100vmin;
+      max-width: 700px;
+      max-height: 700px;
+      background: rgba(0, 0, 0, 0);
       display: none; /* Hide splash screen initially */
       justify-content: center;
       align-items: center;
       transition: opacity 3s ease; /* Fade-out transition */
       opacity: 1;
       cursor: pointer; /* Change cursor to pointer */
+      z-index: 40000; /* Higher than landing page but lower than iframe */
       overflow: hidden; /* Hide overflow */
+      touch-action: manipulation; /* Prevent accidental zooming */
+      -webkit-overflow-scrolling: touch; /* Enable smooth scrolling on iOS */
+      user-select: none; /* Prevent text selection */
+      -webkit-user-select: none; /* Prevent text selection on iOS */
+      -webkit-touch-callout: none; /* Prevent callout to copy image, etc when tap to hold */
+      -webkit-tap-highlight-color: transparent; /* Remove button highlight on tap */
     }
-
+  
     .splash-screen img {
       position: absolute;
-      width: 450px; /* Fixed width */
-      height: 330px; /* Fixed height */
+      width: 100%; /* Fixed width */
+      height: 100%; /* Fixed height */
       object-fit: cover; /* Ensure images fit their container */
-    }
-
-    .splash-screen img:first-child {
-      animation: sizeTransition 10s forwards, fadeIn 10s forwards; /* Apply animations */
-    }
-
-    .splash-screen img:last-child {
-      width: 550px !important;
       opacity: 0; /* Initial opacity */
       animation: fadeIn 5s forwards; /* Apply fade-in animation */
     }
-
-    @keyframes sizeTransition {
-      from {
-        transform: scale(0.5); /* Start at 100% */
-      }
-      to {
-        transform: scale(1.5); /* Adjust final scale */
-      }
-    }
-
+  
     @keyframes fadeIn {
       from {
         opacity: 0;
@@ -216,13 +196,13 @@
         opacity: 1;
       }
     }
-
+  
     .splash-screen.fade-out {
       opacity: 0;
       pointer-events: none; /* Allow clicks to pass through */
       animation: clunkyFadeOut 2.5s steps(5, end) forwards !important; /* Duration of 2.5 seconds with 5 discrete steps */
     }
-
+  
     @keyframes clunkyFadeOut {
       0% {
         opacity: 1;
@@ -240,7 +220,7 @@
         opacity: 0;
       }
     }
-
+  
     /* Landing Page Styles */
     .landing-page {
       position: absolute;
@@ -255,7 +235,7 @@
       z-index: 50000; /* Ensure above everything else */
       transition: opacity 2s ease; /* Smooth fade-out transition */
     }
-
+  
     .landing-content {
       text-align: center;
       background: black;
@@ -266,7 +246,7 @@
       border: 1px solid white;
       border-radius: 10px;
     }
-
+  
     .landing-content a {
       color: white;
       text-decoration: none;
@@ -277,32 +257,16 @@
       padding: 5px 10px;
       border-radius: 5px;
     }
-
+  
     .landing-content a:hover {
       background: white;
       color: black;
     }
-
-    /* Black Screen Overlay Styles */
-.black-screen-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: black;
-  z-index: 35000; /* Higher than splash screen but lower than bottom-right container */
-  display: none; /* Hide initially */
-  transition: opacity 2s ease; /* Smooth fade-out transition */
-  opacity: 1;
-}
   </style>
-</head>
+  </head>
 <body>
-  <body>
-    <iframe id="main-frame" src="nav.html" allow="autoplay"></iframe>
-  
-    <div class="black-screen-overlay" id="black-screen-overlay"></div>
+    <iframe id="clickableIframe"></iframe>
+    <iframe id="main-frame" src="" allow="autoplay"></iframe>
   
     <div class="bottom-right-container">
       <div class="audio-player" id="audio-button">
@@ -319,12 +283,12 @@
           <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
         </svg>
         <audio id="audio-player" loop>
-          <source id="audio-source" src="" type="audio/mpeg">
+          <source id="audio-source" src="sounds/nav00.m4a" type="audio/mpeg">
         </audio>
       </div>
   
       <div class="menu">
-        <a href="#" onmouseover="changeImage(this)" onmouseout="resetImage(this)" onclick="loadInIframe('about.html'); return false;">
+        <a href="#" onmouseover="changeImage(this)" onmouseout="resetImage(this)">
           <img src="images/menu.gif" class="menu-img">
           <span class="tooltiptext">ABOUT</span>
         </a>
@@ -333,8 +297,7 @@
   
     <!-- Splash Screen -->
     <div class="splash-screen" id="splash-screen">
-      <img src="images/nav00a.webp" alt="Splash Image 1">
-      <img id="nav00b2" src="images/nav00b2.webp" alt="Splash Image 2" style="animation-delay: 10s;">
+      <img id="nav00b2" src="images/nav00b3.webp" alt="Splash Image 2" style="animation-delay: 10s;">
     </div>
   
     <!-- Landing Page -->
@@ -358,10 +321,8 @@
     const pauseIcon = document.getElementById('pause-icon');
     const splashScreen = document.getElementById('splash-screen');
     const landingPage = document.getElementById('landing-page');
-    const blackScreenOverlay = document.getElementById('black-screen-overlay');
     
     let fadeDuration = 1000; // Fade duration in milliseconds
-    let titleSet = false; // Flag to track if title has been set
     
     // Helper function to get absolute URL
     function getAbsoluteUrl(url) {
@@ -386,52 +347,54 @@
           });
         }
       }
-    
-      if (event.data.action === 'updateTitle') {
-        if (!titleSet) {
-          document.title = event.data.title; // Set the title only if it hasn't been set
-          titleSet = true; // Mark the title as set
-        }
-      }
     });
     
-    // Event listener for iframe load to update title
-    iframe.addEventListener('load', () => {
-      if (iframe.contentDocument && iframe.contentDocument.title) {
-        // Reset titleSet flag when iframe loads a new page
-        titleSet = false;
-        document.title = iframe.contentDocument.title;
-      }
-    });
-    
-    function loadInIframe(url) {
-      iframe.src = url; // Change the source of the iframe
-      splashScreen.classList.remove('fade-out');
-      splashScreen.style.display = 'none';
-      focusIframe();
-    }
+  
     
     function enterWebsite() {
-      showBlackScreenOverlay();
-      fadeOutLandingPage(() => {
+    fadeOutLandingPage(() => {
         splashScreen.style.display = 'flex'; // Show splash screen
-        hideBlackScreenOverlay();
         focusIframe();
-      });
-    }
-    
-    function enterWebsiteWithAudio() {
-      showBlackScreenOverlay();
-      fadeOutLandingPage(() => {
+        document.getElementById('main-frame').src = "test.html";
+        document.getElementById('splash-screen').style.pointerEvents = "none";
+        document.getElementById('nav00b2').style.pointerEvents = "none";
+
+        setTimeout(() => {
+            document.getElementById('splash-screen').style.pointerEvents = "auto";
+            document.getElementById('nav00b2').style.pointerEvents = "auto";
+        }, 17000);
+    });
+}
+
+function enterWebsiteWithAudio() {
+    fadeOutLandingPage(() => {
         splashScreen.style.display = 'flex'; // Show splash screen
         fadeInAudio();
-        hideBlackScreenOverlay();
         focusIframe();
         playIcon.style.display = 'none';
         pauseIcon.style.display = 'block';
         musicNoteIcon.style.display = 'none';
-      });
-    }
+        document.getElementById('main-frame').src = "test.html";
+        document.getElementById('splash-screen').style.pointerEvents = "none";
+        document.getElementById('nav00b2').style.pointerEvents = "none";
+
+        setTimeout(() => {
+            document.getElementById('splash-screen').style.pointerEvents = "auto";
+            document.getElementById('nav00b2').style.pointerEvents = "auto";
+        }, 17000);
+    });
+}
+
+
+splashScreen.addEventListener('click', () => {
+    splashScreen.classList.add('fade-out');
+    setTimeout(() => {
+        changeIframeButtonStyle();
+        document.getElementById('nav00b2').style.display = 'none';
+        document.getElementById('splash-screen').style.display = 'none'; // Ensure display is set to none
+    }, 2500);
+});
+
     
     function fadeOutLandingPage(callback) {
       landingPage.style.opacity = '0';
@@ -440,22 +403,7 @@
         if (callback) callback();
       }, 2000); // Match the transition duration
     }
-    
-    // Show black screen overlay
-    function showBlackScreenOverlay() {
-      blackScreenOverlay.style.display = 'block';
-    }
-    
-    // Hide black screen overlay
-    function hideBlackScreenOverlay() {
-      setTimeout(() => {
-        blackScreenOverlay.style.opacity = '0';
-        setTimeout(() => {
-          blackScreenOverlay.style.display = 'none';
-          blackScreenOverlay.style.opacity = '1';
-        }, 2000); // Match the transition duration
-      }, 2000); // Show for 2 seconds
-    }
+
     
     let tooltipTimeout;
     
@@ -547,16 +495,33 @@
       }
     });
     
-    // Handle splash screen click to fade out
-    splashScreen.addEventListener('click', () => {
-      splashScreen.classList.add('fade-out');
-      focusIframe();
-    });
     
     // Function to set focus to the iframe
     function focusIframe() {
       iframe.focus();
     }
+
+    let animationDirection = 1; // Example direction, set to 1 for forward, -1 for backward
+    // Function to make nav buttons visible on child window
+    function changeIframeButtonStyle() {
+            // Access the iframe
+            const iframe = document.getElementById('main-frame');
+            const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+
+            // Get all elements with the class 'control-button' in the iframe
+            const buttons = iframeDocument.getElementsByClassName('control-button');
+            for (let button of buttons) {
+                button.style.color = 'white';
+            }
+
+            if (iframe.contentWindow.slowDownAnimationNearest) {
+              iframe.contentWindow.slowDownAnimationNearest(animationDirection);
+            } else {
+              console.error('slowDownAnimation function is not defined in the iframe.');
+            };
+            focusIframe();
+    }
+
     </script>
     </body>
 </html>

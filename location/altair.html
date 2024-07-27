@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Altair Bar | Small Planet Phantasmagoria</title>
   <link rel="stylesheet" href="locstyle.css"> <!-- Link to external CSS file -->
+  <style>
+    .container {
+      display: grid;
+      grid-template-rows: auto auto auto; /* Three rows */
+      gap: 10px; /* Space between rows */
+      max-width: 600px; /* Max width for the container */
+      margin: 0 auto; /* Center the container horizontally */
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -15,47 +24,89 @@
       <div class="text-row">
         <p>
           <span style="font-size: 24px;">Altair Bar</span>
-          <br>
-          <br>
+          <br><br>
           For many months and many years, the Star Heads travel along their predetermined orbits throughout space. For those whose long journeys have come to an end, they return, traveling to this bar to ease their travel fatigue, make friends, and talk with their father (creator).
-          <br>
-          <br>
+          <br><br>
           A place for Star Heads worn out from their journeys to breathe easy–a bar situated near the Crystal Mountain Range in an open plain. In the rare event that the bar cannot be found, it can be called from a telephone also in the plain, after which it will drop down from the sky. Inside the bar is a quiet and calming atmosphere. The place is almost famous for its two billion year-old sake, Starlight Spirits, that it serves. This brew serves as something of a silver bullet for Star Heads who have lost their luster and whose light is fading.
-          <br>
-          <br>
+          <br><br>
           Star Heads visit the place to rest their bodies in the Cosmic Ocean at the end of their travels and talk with their father, the one who created them–the Star Maker.
-          <br>
-          <br>
+          <br><br>
           Located near the ocean of glass, Glassy Ocean, and the Man-made Moon created by Dr. Hoop.
-          <br>
         </p>
       </div>
       <div class="navigation">
         <div class="grid-3x3">
           <div></div>
-          <a href="../nav.html" class="nav-button"><img src="../images/nav-n.webp" alt="Go North"></a>
+          <a href="" class="nav-button"><img src="../images/nav-n.webp" alt="Go North"></a>
           <div></div>
-          <a href="../nav.html" class="nav-button"><img src="../images/nav-w.webp" alt="Go West"></a>
-          <a href="../nav.html" class="nav-button"><img src="../images/nav-home.gif" alt="Navigation Home"></a>
-          <a href="../nav.html" class="nav-button"><img src="../images/nav-e.webp" alt="Go East"></a>
+          <a href="" class="nav-button"><img src="../images/nav-w.webp" alt="Go West"></a>
+          <img class="nav-button" id="closepage" src="../images/nav-home.gif" alt="Navigation Home">
+          <a href="" class="nav-button"><img src="../images/nav-e.webp" alt="Go East"></a>
           <div></div>
-          <a href="../nav.html" class="nav-button"><img src="../images/nav-s.webp" alt="Go South"></a>
+          <a href="" class="nav-button"><img src="../images/nav-s.webp" alt="Go South"></a>
           <div></div>
         </div>
       </div>
     </div>
   </div>
   <script>
-    window.addEventListener('load', () => {
+    document.addEventListener('DOMContentLoaded', function() {
       const audioUrl = 'sounds/altair-01.m4a'; // Change this to the appropriate audio URL for each iframe page
       const pageTitle = document.title; // Get the current iframe page's title
 
-      window.parent.postMessage({
+      // Post message to change the audio in the parent window
+      window.top.postMessage({
         action: 'changeAudio',
         url: audioUrl,
-        title: pageTitle // Include the page title in the message
+        title: pageTitle
       }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
     });
-  </script>
-</body>
+
+    // Add event listener for the close button
+    document.getElementById('closepage').addEventListener('click', function() {
+      window.parent.postMessage('closeIframe', '*');
+
+      const audioUrl = 'sounds/nav00.m4a'; // Don't change this per loc page
+      window.top.postMessage({
+        action: 'changeAudio',
+        url: audioUrl,
+        title: 'Small Planet Phantasmagoria'
+      }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
+    });
+
+    // Function to handle back button and trigger custom actions
+    function handleBackNavigation(event) {
+      // Prevent the default back navigation
+      event.preventDefault();
+
+      // Capture the current scroll position
+      const scrollPosition = {
+        left: window.scrollX,
+        top: window.scrollY
+      };
+
+      // Restore the scroll position after navigation
+      setTimeout(() => {
+        window.scrollTo(scrollPosition.left, scrollPosition.top);
+      }, 0);
+
+      window.parent.postMessage('closeIframe', '*');
+
+      const audioUrl = 'sounds/nav00.m4a'; // Don't change this per loc page
+      window.top.postMessage({
+        action: 'changeAudio',
+        url: audioUrl,
+        title: 'Small Planet Phantasmagoria'
+      }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
+    }
+
+    // Listen for the popstate event
+    window.addEventListener('popstate', function(event) {
+      handleBackNavigation(event);
+    });
+
+    // Initialize a state to prevent the initial popstate event from being fired
+    history.pushState(null, null, window.location.href);
+    </script>
+    </body>
 </html>
