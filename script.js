@@ -2831,7 +2831,7 @@ function drawFrame(frameIndex) {
         const scaleX = canvas.width / originalFrameWidth;
         const scaleY = canvas.height / originalFrameHeight;
         ctx.strokeStyle = 'red';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 0.5;
         currentFrameAreas.areas.forEach(area => {
             ctx.beginPath();
             ctx.moveTo((area.points[0].x + offsetX) * scaleX, (area.points[0].y + offsetY) * scaleY);
