@@ -162,7 +162,7 @@
       display: none; /* Hide splash screen initially */
       justify-content: center;
       align-items: center;
-      transition: opacity 3s ease; /* Fade-out transition */
+      transition: opacity 2s ease; /* Fade-out transition */
       opacity: 1;
       cursor: pointer; /* Change cursor to pointer */
       z-index: 40000; /* Higher than landing page but lower than iframe */
@@ -196,7 +196,7 @@
     .splash-screen.fade-out {
       opacity: 0;
       pointer-events: none; /* Allow clicks to pass through */
-      animation: clunkyFadeOut 2.5s steps(5, end) forwards !important; /* Duration of 2.5 seconds with 5 discrete steps */
+      animation: clunkyFadeOut 2s steps(5, end) forwards !important; /* Duration of 2.5 seconds with 5 discrete steps */
     }
   
     @keyframes clunkyFadeOut {
@@ -358,7 +358,7 @@
         setTimeout(() => {
             document.getElementById('splash-screen').style.pointerEvents = "auto";
             document.getElementById('nav00b2').style.pointerEvents = "auto";
-        }, 17000);
+        }, 12000);
     });
 }
 
@@ -377,7 +377,7 @@ function enterWebsiteWithAudio() {
         setTimeout(() => {
             document.getElementById('splash-screen').style.pointerEvents = "auto";
             document.getElementById('nav00b2').style.pointerEvents = "auto";
-        }, 17000);
+        }, 12000);
     });
 }
 
@@ -388,7 +388,7 @@ splashScreen.addEventListener('click', () => {
         changeIframeButtonStyle();
         document.getElementById('nav00b2').style.display = 'none';
         document.getElementById('splash-screen').style.display = 'none'; // Ensure display is set to none
-    }, 2500);
+    }, 2000);
 });
 
     

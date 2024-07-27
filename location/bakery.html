@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hon’yara Bakery | Small Planet Phantasmagoria</title>
+  <title>Hon'yara Bakery | Small Planet Phantasmagoria</title>
   <link rel="stylesheet" href="locstyle.css"> <!-- Link to external CSS file -->
 </head>
 <body>
@@ -14,42 +14,88 @@
       </div>
       <div class="text-row">
         <p>
-          <span style="font-size: 24px;">Hon’yara Bakery (gif pending)</span>
+          <span style="font-size: 24px;">Hon'yara Bakery</span><br>
+          <br>
+          . 
           <br>
           <br>
-          A bakery made of bread itself. For a radius of several kilometers, an enticing scent wafts, leading to near-constant targeting by flocks of birds and mischiefs of rats. A lip-licking bakery made of bread—the scent of freshly baked bread hangs in the air in the relative vicinity. 
-          <br>
-          <br>
-          The most popular bakery on all of Phantasmagoria, popular with even the birds and the rats, much to the bakers’ chagrin. Never knowing when the next raid by the critters will be, the bakers keep a sharp lookout at all times, making them constantly on edge. A dog was added to aid in keeping watch, but appears to also fear the rats. When not servicing the bread oven or other maintenance-related tasks, they will let visitors watch them bake the bread. You may want to take a look! Their most popular golden brown confection is ‘Pan de Queso,’ a cheese bread made with the magma cheese from Mt. Cheese.
+          .
           <br>
         </p>
       </div>
       <div class="navigation">
         <div class="grid-3x3">
           <div></div>
-          <a href="../nav.html" class="nav-button"><img src="../images/nav-n.webp" alt="Go North"></a>
+          <a href="" class="nav-button"><img src="../images/nav-n.webp" alt="Go North"></a>
           <div></div>
-          <a href="../nav.html" class="nav-button"><img src="../images/nav-w.webp" alt="Go West"></a>
-          <a href="../nav.html" class="nav-button"><img src="../images/nav-home.gif" alt="Navigation Home"></a>
-          <a href="../nav.html" class="nav-button"><img src="../images/nav-e.webp" alt="Go East"></a>
+          <a href="" class="nav-button"><img src="../images/nav-w.webp" alt="Go West"></a>
+          <img class="nav-button" id="closepage" src="../images/nav-home.gif" alt="Navigation Home">
+          <a href="" class="nav-button"><img src="../images/nav-e.webp" alt="Go East"></a>
           <div></div>
-          <a href="../nav.html" class="nav-button"><img src="../images/nav-s.webp" alt="Go South"></a>
+          <a href="" class="nav-button"><img src="../images/nav-s.webp" alt="Go South"></a>
           <div></div>
         </div>
       </div>
     </div>
   </div>
   <script>
-    window.addEventListener('load', () => {
+    document.addEventListener('DOMContentLoaded', function() {
       const audioUrl = 'sounds/nav00.m4a'; // Change this to the appropriate audio URL for each iframe page
       const pageTitle = document.title; // Get the current iframe page's title
 
-      window.parent.postMessage({
+      // Post message to change the audio in the parent window
+      window.top.postMessage({
         action: 'changeAudio',
         url: audioUrl,
-        title: pageTitle // Include the page title in the message
+        title: pageTitle
       }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
     });
-  </script>
+
+    // Add event listener for the close button
+    document.getElementById('closepage').addEventListener('click', function() {
+      window.parent.postMessage('closeIframe', '*');
+
+      const audioUrl = 'sounds/nav00.m4a'; // Don't change this per loc page
+      window.top.postMessage({
+        action: 'changeAudio',
+        url: audioUrl,
+        title: 'Small Planet Phantasmagoria'
+      }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
+    });
+
+    // Function to handle back button and trigger custom actions
+    function handleBackNavigation(event) {
+      // Prevent the default back navigation
+      event.preventDefault();
+
+      // Capture the current scroll position
+      const scrollPosition = {
+        left: window.scrollX,
+        top: window.scrollY
+      };
+
+      // Restore the scroll position after navigation
+      setTimeout(() => {
+        window.scrollTo(scrollPosition.left, scrollPosition.top);
+      }, 0);
+
+      window.parent.postMessage('closeIframe', '*');
+
+      const audioUrl = 'sounds/nav00.m4a'; // Don't change this per loc page
+      window.top.postMessage({
+        action: 'changeAudio',
+        url: audioUrl,
+        title: 'Small Planet Phantasmagoria'
+      }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
+    }
+
+    // Listen for the popstate event
+    window.addEventListener('popstate', function(event) {
+      handleBackNavigation(event);
+    });
+
+    // Initialize a state to prevent the initial popstate event from being fired
+    history.pushState(null, null, window.location.href);
+    </script>
 </body>
 </html>

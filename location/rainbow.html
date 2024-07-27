@@ -14,41 +14,88 @@
       </div>
       <div class="text-row">
         <p>
-          <span style="font-size: 24px;">Rainbow Valley Color Factory (gif pending)</span><br>
+          <span style="font-size: 24px;">Rainbow Valley Color Factory</span><br>
           <br>
-          A valley in which a rainbow that becomes solid appears, serving as the raw ingredient for the color pigments produced by the factory. The colors produced here hold the reputation of being “capable of reproducing any color” among painters and artisans alike. 
+          . 
           <br>
           <br>
-          A beautiful valley in which a rainbow appears—about 70km southwards of Dragon Mountain, a stunning valley in which a solidified rainbow is formed. A long time prior, painter Mr. R used the colors produced by this rainbow in his work, and, noting that they perfectly reproduced the colors found in nature, decided to create a pigment factory in the location. However, it is said that the factory itself is quite difficult to manage as when the rainbow disappears, factory work also grinds to a halt. A railroad—Pablo Light Railway—originally laid out for the purpose of transporting the colors into town serves the menial work of carrying droves of factory employees out to the town on days when there is no rainbow. The factory manager lamented this behavior, shooting sidelong glances at his employees entirely too engrossed in messing around, stating, “Our livelihoods depend on the rainbow, after all…”.
+          .
           <br>
         </p>
       </div>
       <div class="navigation">
         <div class="grid-3x3">
           <div></div>
-          <a href="../nav.html" class="nav-button"><img src="../images/nav-n.webp" alt="Go North"></a>
+          <a href="" class="nav-button"><img src="../images/nav-n.webp" alt="Go North"></a>
           <div></div>
-          <a href="../nav.html" class="nav-button"><img src="../images/nav-w.webp" alt="Go West"></a>
-          <a href="../nav.html" class="nav-button"><img src="../images/nav-home.gif" alt="Navigation Home"></a>
-          <a href="../nav.html" class="nav-button"><img src="../images/nav-e.webp" alt="Go East"></a>
+          <a href="" class="nav-button"><img src="../images/nav-w.webp" alt="Go West"></a>
+          <img class="nav-button" id="closepage" src="../images/nav-home.gif" alt="Navigation Home">
+          <a href="" class="nav-button"><img src="../images/nav-e.webp" alt="Go East"></a>
           <div></div>
-          <a href="../nav.html" class="nav-button"><img src="../images/nav-s.webp" alt="Go South"></a>
+          <a href="" class="nav-button"><img src="../images/nav-s.webp" alt="Go South"></a>
           <div></div>
         </div>
       </div>
     </div>
   </div>
   <script>
-    window.addEventListener('load', () => {
+    document.addEventListener('DOMContentLoaded', function() {
       const audioUrl = 'sounds/nav00.m4a'; // Change this to the appropriate audio URL for each iframe page
       const pageTitle = document.title; // Get the current iframe page's title
 
-      window.parent.postMessage({
+      // Post message to change the audio in the parent window
+      window.top.postMessage({
         action: 'changeAudio',
         url: audioUrl,
-        title: pageTitle // Include the page title in the message
+        title: pageTitle
       }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
     });
-  </script>
+
+    // Add event listener for the close button
+    document.getElementById('closepage').addEventListener('click', function() {
+      window.parent.postMessage('closeIframe', '*');
+
+      const audioUrl = 'sounds/nav00.m4a'; // Don't change this per loc page
+      window.top.postMessage({
+        action: 'changeAudio',
+        url: audioUrl,
+        title: 'Small Planet Phantasmagoria'
+      }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
+    });
+
+    // Function to handle back button and trigger custom actions
+    function handleBackNavigation(event) {
+      // Prevent the default back navigation
+      event.preventDefault();
+
+      // Capture the current scroll position
+      const scrollPosition = {
+        left: window.scrollX,
+        top: window.scrollY
+      };
+
+      // Restore the scroll position after navigation
+      setTimeout(() => {
+        window.scrollTo(scrollPosition.left, scrollPosition.top);
+      }, 0);
+
+      window.parent.postMessage('closeIframe', '*');
+
+      const audioUrl = 'sounds/nav00.m4a'; // Don't change this per loc page
+      window.top.postMessage({
+        action: 'changeAudio',
+        url: audioUrl,
+        title: 'Small Planet Phantasmagoria'
+      }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
+    }
+
+    // Listen for the popstate event
+    window.addEventListener('popstate', function(event) {
+      handleBackNavigation(event);
+    });
+
+    // Initialize a state to prevent the initial popstate event from being fired
+    history.pushState(null, null, window.location.href);
+    </script>
 </body>
 </html>
