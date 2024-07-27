@@ -21,32 +21,79 @@
           <br>
           </p>
         </div>
-      <div class="navigation">
-        <div class="grid-3x3">
-          <div></div>
-          <a href="../nav.html" class="nav-button"><img src="../images/nav-n.webp" alt="Go North"></a>
-          <div></div>
-          <a href="../nav.html" class="nav-button"><img src="../images/nav-w.webp" alt="Go West"></a>
-          <a href="../nav.html" class="nav-button"><img src="../images/nav-home.gif" alt="Navigation Home"></a>
-          <a href="../nav.html" class="nav-button"><img src="../images/nav-e.webp" alt="Go East"></a>
-          <div></div>
-          <a href="../nav.html" class="nav-button"><img src="../images/nav-s.webp" alt="Go South"></a>
-          <div></div>
+        <div class="navigation">
+          <div class="grid-3x3">
+            <div></div>
+            <a href="" class="nav-button"><img src="../images/nav-n.webp" alt="Go North"></a>
+            <div></div>
+            <a href="" class="nav-button"><img src="../images/nav-w.webp" alt="Go West"></a>
+            <img class="nav-button" id="closepage" src="../images/nav-home.gif" alt="Navigation Home">
+            <a href="" class="nav-button"><img src="../images/nav-e.webp" alt="Go East"></a>
+            <div></div>
+            <a href="" class="nav-button"><img src="../images/nav-s.webp" alt="Go South"></a>
+            <div></div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <script>
-    window.addEventListener('load', () => {
-      const audioUrl = 'sounds/crystal-01.m4a'; // Change this to the appropriate audio URL for each iframe page
-      const pageTitle = document.title; // Get the current iframe page's title
-
-      window.parent.postMessage({
-        action: 'changeAudio',
-        url: audioUrl,
-        title: pageTitle // Include the page title in the message
-      }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
-    });
-  </script>
-</body>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const audioUrl = 'sounds/crystal-01.m4a'; // Change this to the appropriate audio URL for each iframe page
+        const pageTitle = document.title; // Get the current iframe page's title
+  
+        // Post message to change the audio in the parent window
+        window.top.postMessage({
+          action: 'changeAudio',
+          url: audioUrl,
+          title: pageTitle
+        }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
+      });
+  
+      // Add event listener for the close button
+      document.getElementById('closepage').addEventListener('click', function() {
+        window.parent.postMessage('closeIframe', '*');
+  
+        const audioUrl = 'sounds/nav00.m4a'; // Don't change this per loc page
+        window.top.postMessage({
+          action: 'changeAudio',
+          url: audioUrl,
+          title: 'Small Planet Phantasmagoria'
+        }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
+      });
+  
+      // Function to handle back button and trigger custom actions
+      function handleBackNavigation(event) {
+        // Prevent the default back navigation
+        event.preventDefault();
+  
+        // Capture the current scroll position
+        const scrollPosition = {
+          left: window.scrollX,
+          top: window.scrollY
+        };
+  
+        // Restore the scroll position after navigation
+        setTimeout(() => {
+          window.scrollTo(scrollPosition.left, scrollPosition.top);
+        }, 0);
+  
+        window.parent.postMessage('closeIframe', '*');
+  
+        const audioUrl = 'sounds/nav00.m4a'; // Don't change this per loc page
+        window.top.postMessage({
+          action: 'changeAudio',
+          url: audioUrl,
+          title: 'Small Planet Phantasmagoria'
+        }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
+      }
+  
+      // Listen for the popstate event
+      window.addEventListener('popstate', function(event) {
+        handleBackNavigation(event);
+      });
+  
+      // Initialize a state to prevent the initial popstate event from being fired
+      history.pushState(null, null, window.location.href);
+      </script>
+      </body>
 </html>
