@@ -39,28 +39,31 @@
     </div>
   </div>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      document.body.style.opacity = '1';
+        window.addEventListener('load', function() {
+            document.body.style.opacity = '1';
 
-// Select all links on the page
-    var links = document.querySelectorAll('a');
+                // Select all links on the page
+                    var links = document.querySelectorAll('a');
 
-// Loop through each link
-links.forEach(function(link) {
-    // Add click event listener to each link
-    link.addEventListener('click', function(event) {
-        // Prevent the default action to control navigation manually
-        event.preventDefault();
-        
-        // Change body opacity to 0
-        document.body.style.opacity = '0';
-        
-        // Use setTimeout to navigate to the link's href after the opacity change
-        setTimeout(function() {
-            window.location.href = link.href;
-        }, 2000); // Delay should match the transition duration or be slightly longer
-    });
-});
+                // Loop through each link
+                links.forEach(function(link) {
+                    // Add click event listener to each link
+                    link.addEventListener('click', function(event) {
+                        // Prevent the default action to control navigation manually
+                        event.preventDefault();
+                        
+                        // Change body opacity to 0
+                        document.body.style.opacity = '0';
+                        
+                        // Use setTimeout to navigate to the link's href after the opacity change
+                        setTimeout(function() {
+                            window.location.href = link.href;
+                        }, 2000); // Delay should match the transition duration or be slightly longer
+                    });
+                });
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+
 
 
       const audioUrl = 'sounds/nav00.m4a'; // Change this to the appropriate audio URL for each iframe page
