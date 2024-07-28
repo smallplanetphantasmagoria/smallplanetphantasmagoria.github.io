@@ -6017,7 +6017,7 @@ function drawFrame(frameIndex) {
     }
 
     // Update frame info
-    frameInfo.textContent = `Test ver. 0.4.2 || Frame: ${frameIndex}`;
+    frameInfo.textContent = `Test ver. 0.4.3 || Frame: ${frameIndex}`;
 };
     
 
