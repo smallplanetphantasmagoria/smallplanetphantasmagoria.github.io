@@ -1,0 +1,8 @@
+ffmpeg -i input.avi -vf "crop=in_w:in_h-140:0:70,trim=start=78.583:end=92.500,setpts=PTS-STARTPTS" -c:v libx264 -profile:v high -level 4.0 -preset veryslow -crf 12 -pix_fmt yuv420p -tune animation -x264opts keyint=24:min-keyint=24 -an output.mp4
+
+
+ffmpeg -i output.mp4 -c copy -map 0 -f hls -hls_time 2 -hls_list_size 0 -hls_segment_filename "segment_%03d.ts" playlist.m3u8
+
+
+
+ffmpeg -i input.avi -vf "crop=in_w:in_h-140:0:70,trim=start=78.583:end=92.500,setpts=PTS-STARTPTS,fps=12" -c:v libwebp -lossless 1 -loop 0 -an output.webp

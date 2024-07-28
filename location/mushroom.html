@@ -26,13 +26,13 @@
       <div class="navigation">
         <div class="grid-3x3">
           <div></div>
-          <a href="" class="nav-button"><img src="../images/nav-n.webp" alt="Go North"></a>
+          <a href="crystal.html" class="nav-button"><img src="../images/nav-n.webp" alt="Go North"></a>
           <div></div>
-          <a href="" class="nav-button"><img src="../images/nav-w.webp" alt="Go West"></a>
+          <a href="dragon.html" class="nav-button"><img src="../images/nav-w.webp" alt="Go West"></a>
           <img class="nav-button" id="closepage" src="../images/nav-home.gif" alt="Navigation Home">
-          <a href="" class="nav-button"><img src="../images/nav-e.webp" alt="Go East"></a>
+          <img class="nav-button" src="../images/nav-h.webp" alt="Stop">
           <div></div>
-          <a href="" class="nav-button"><img src="../images/nav-s.webp" alt="Go South"></a>
+          <a href="cheese.html" class="nav-button"><img src="../images/nav-s.webp" alt="Go South"></a>
           <div></div>
         </div>
       </div>
@@ -40,6 +40,29 @@
   </div>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      document.body.style.opacity = '1';
+
+          // Select all links on the page
+              var links = document.querySelectorAll('a');
+
+          // Loop through each link
+          links.forEach(function(link) {
+              // Add click event listener to each link
+              link.addEventListener('click', function(event) {
+                  // Prevent the default action to control navigation manually
+                  event.preventDefault();
+                  
+                  // Change body opacity to 0
+                  document.body.style.opacity = '0';
+                  
+                  // Use setTimeout to navigate to the link's href after the opacity change
+                  setTimeout(function() {
+                      window.location.href = link.href;
+                  }, 1500); // Delay should match the transition duration or be slightly longer
+              });
+          });
+
+
       const audioUrl = 'sounds/nav00.m4a'; // Change this to the appropriate audio URL for each iframe page
       const pageTitle = document.title; // Get the current iframe page's title
 

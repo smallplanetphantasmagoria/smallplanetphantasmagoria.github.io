@@ -5,6 +5,8 @@ body {
   color: white; /* Default text color for readability */
   overflow: auto; /* Allow scrolling if content exceeds viewport height */
   font-family: Georgia, serif; /* Use Georgia font for text */
+  opacity: 0;
+  transition: opacity 1s ease-in-out; /* Smooth transition */
 }
 
 #closepage {
