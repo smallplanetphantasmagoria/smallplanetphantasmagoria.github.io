@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=constrain">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
   <title>Small Planet Phantasmagoria</title>
     <!-- Animated .gif favicon -->
     <link rel="icon" href="images/favicon16.gif" sizes="16x16" type="image/gif">
@@ -12,9 +15,9 @@
     <link rel="icon" href="images/favicon32.ico" sizes="32x32" type="image/x-icon">
   <link href='https://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet'>
   <style>
-    @media only screen and (max-width: 610px) {
-      .bottom-right-container {
-        display: none;
+@media (max-aspect-ratio: 1/1) {
+      .splash-screen {
+        top: 46% !important;
       }
     }
   

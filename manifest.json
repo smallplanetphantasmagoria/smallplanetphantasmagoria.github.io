@@ -1,7 +1,7 @@
 {
   "name": "Small Planet Phantasmagoria",
   "short_name": "Phantasmagoria",
-  "start_url": "test.html",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000"
