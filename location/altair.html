@@ -5,13 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Altair Bar | Small Planet Phantasmagoria</title>
   <link rel="stylesheet" href="locstyle.css"> <!-- Link to external CSS file -->
+    <!-- HLS scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="../script/loc-hls.js"></script>
 </head>
 <body>
   <div class="container">
     <div class="grid">
       <div class="image-row">
-        <img src="../images/location/altair-01.gif" alt="Altair Image">
-      </div>
+        <video id="video" muted playsinline loop></video>
+        <img id="fallbackImage" src="../images/location/altair-01.gif" alt="Backup Image">      </div>
       <div class="text-row">
         <p>
           <span style="font-size: 24px;">Altair Bar</span>
@@ -41,6 +44,9 @@
     </div>
   </div>
   <script>
+        // HLS Video
+        var videoSrc = '../images/location/altair/01/1.m3u8'; // Replace with your HLS URL
+
         window.addEventListener('load', function() {
             document.body.style.opacity = '1';
 

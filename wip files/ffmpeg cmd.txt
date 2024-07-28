@@ -1,7 +1,23 @@
-ffmpeg -i input.avi -vf "crop=in_w:in_h-140:0:70,trim=start=78.583:end=92.500,setpts=PTS-STARTPTS" -c:v libx264 -profile:v high -level 4.0 -preset veryslow -crf 12 -pix_fmt yuv420p -tune animation -x264opts keyint=24:min-keyint=24 -an output.mp4
+1. Get/convert a video you can open in avidemux for timing references.
+2. Get times and input below.
 
 
-ffmpeg -i output.mp4 -c copy -map 0 -f hls -hls_time 2 -hls_list_size 0 -hls_segment_filename "segment_%03d.ts" playlist.m3u8
+ffmpeg -i in.avi -vf "crop=in_w:in_h-140:0:70,trim=start=98.250:end=106.166,setpts=PTS-STARTPTS" -c:v libx264 -profile:v high -level 4.0 -preset veryslow -crf 12 -pix_fmt yuv420p -tune animation -x264opts keyint=24:min-keyint=24 -an 10.mp4
+
+
+3. Use in ffmepg. Different filename number (1,2,3,etc) for each segment.
+4. Open cmd in youtube-dl folder and run convert_to_hls.bat
+5. Open playlist 1 in text editor and paste the segment info from each playlist (noting any special order requirements.)
+6. Check #EXT-X-TARGETDURATION:___ is the length of the longest segment.
+7. Copy/paste lots of times to create a long video.
+8. Use hlsshuffle.html to shuffle the segments.
+9. Final organisation, and copy/paste relevant code into loc page (header js import, video div, hls variable).
+
+
+-------
+
+
+ffmpeg -i 1.mp4 -c copy -map 0 -f hls -hls_time 99999 -hls_list_size 0 -hls_segment_filename "segment_%03d.ts" playlist.m3u8
 
 
 
