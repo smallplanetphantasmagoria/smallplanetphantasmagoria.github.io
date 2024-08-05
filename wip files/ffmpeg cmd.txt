@@ -16,9 +16,15 @@ ffmpeg -i in.avi -vf "crop=in_w:in_h-140:0:70,trim=start=98.250:end=106.166,setp
 
 -------
 
+Random commands
+
+ffmpeg -i input.wav -c:a aac -b:a 64k output.m4a
+
+
+ffmpeg -i playlist.m3u8 -c copy output.mp4
+
 
 ffmpeg -i 1.mp4 -c copy -map 0 -f hls -hls_time 99999 -hls_list_size 0 -hls_segment_filename "segment_%03d.ts" playlist.m3u8
-
 
 
 ffmpeg -i input.avi -vf "crop=in_w:in_h-140:0:70,trim=start=78.583:end=92.500,setpts=PTS-STARTPTS,fps=12" -c:v libwebp -lossless 1 -loop 0 -an output.webp

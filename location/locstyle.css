@@ -27,13 +27,13 @@ body {
     margin: none !important;
   };
   .text-row {
-    padding: 0px 25px 25px 25px !important; /* Add padding around text for readability */
+    padding: 0px 25px 20px 20px !important; /* Add padding around text for readability */
     size: 1em !important;
   }
   .image-row {
     max-height: 70vh !important;
     max-width: 100vw !important;
-
+    padding-top: 0px !important;
   }
   img {
     max-height: 70vh !important;
@@ -44,7 +44,6 @@ body {
     max-height: 70vh !important;
     width: auto !important;
     max-width: 100vw !important;
-
   }
   
 }
@@ -75,7 +74,7 @@ video {
   image-rendering: pixelated;                 /* Universal support since 2021   */
   image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
   -ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
-
+  cursor: pointer !important;
 }
 #fallbackImage {
   display: none; /* Hidden by default */
@@ -159,4 +158,66 @@ video {
   width: 100%;
   height: 100%;
   object-fit: contain; /* Ensure the image fits within the cell without distortion */
+}
+
+.bottom-left-container {
+  position: fixed; /* Fixed position to stay in the viewport */
+  bottom: 25px;
+  left: 20px;
+  background: #00000000; /* Transparent background */
+  border: solid 0px #00000000; /* Transparent border */
+  color: white; /* White text */
+  padding: 0; /* No padding */
+  z-index: 40001; /* Ensure above iframe */
+  display: flex;
+  align-items: center; /* Center items vertically */
+}
+.home-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: grayscale(100%) brightness(50%);
+  opacity: 50%;
+  transition: 0.5s; /* Smooth transition for filter */
+  flex-shrink: 0;
+}
+.home-button:hover {
+  filter: grayscale(0%) brightness(100%);
+  opacity: 100%
+}
+.home-button img {
+  width: 40px;
+  height: 40px;
+}
+
+.popupoverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  transition: 0.5s;
+}
+
+.popup {
+  position: relative;
+  max-width: 600px;
+  width: 100%;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
+.popup img {
+  width: 100%;
+  height: auto;
+  cursor: pointer;
+}
+
+#map-button {
+  cursor: pointer;
 }

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liquor Shop | Small Planet Phantasmagoria</title>
+  <link rel="stylesheet" href="locstyle.css"> <!-- Link to external CSS file -->
+  <!-- HLS scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script src="../script/loc-hls.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="grid">
+      <div class="image-row">
+        <video id="video" muted playsinline loop></video>
+        <img id="fallbackImage" src="../images/location/liquor/liquor-fallback.webp" alt="Backup Image">
+      </div>
+      <div class="text-row">
+        <p>
+          <span style="font-size: 24px;">Liquor Shop</span>
+          <br>
+          . 
+          <br>
+          <br>
+          .
+          <br>
+        </p>
+      </div>
+      <div class="navigation">
+        <div class="grid-3x3">
+          <div></div>
+          <a href="station.html" class="nav-button"><img src="../images/nav-n.webp" alt="Go North"></a>
+          <div></div>
+          <a href="island.html" class="nav-button"><img src="../images/nav-w.webp" alt="Go West"></a>
+          <img class="nav-button" id="closepage" src="../images/nav-home.gif" alt="Navigation Home">
+          <a href="neptune.html" class="nav-button"><img src="../images/nav-e.webp" alt="Go East"></a>
+          <div></div>
+          <a href="desert.html" class="nav-button"><img src="../images/nav-s.webp" alt="Go South"></a>
+          <div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // HLS Video
+    var videoSrc = '../images/location/liquor/01/liquor-01.m3u8'; // Replace with your HLS URL
+
+    window.addEventListener('load', function() {
+            document.body.style.opacity = '1';
+
+                // Select all links on the page
+                    var links = document.querySelectorAll('a');
+
+                // Loop through each link
+                links.forEach(function(link) {
+                    // Add click event listener to each link
+                    link.addEventListener('click', function(event) {
+                        // Prevent the default action to control navigation manually
+                        event.preventDefault();
+                        
+                        // Change body opacity to 0
+                        document.body.style.opacity = '0';
+                        
+                        // Use setTimeout to navigate to the link's href after the opacity change
+                        setTimeout(function() {
+                            window.location.href = link.href;
+                        }, 2000); // Delay should match the transition duration or be slightly longer
+                    });
+                });
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+
+
+
+      const audioUrl = 'sounds/glassy-01.m4a'; // Change this to the appropriate audio URL for each iframe page
+      const pageTitle = document.title; // Get the current iframe page's title
+
+      // Post message to change the audio in the parent window
+      window.top.postMessage({
+        action: 'changeAudio',
+        url: audioUrl,
+        title: pageTitle
+      }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
+    });
+
+    // Add event listener for the close button
+    document.getElementById('closepage').addEventListener('click', function() {
+      window.parent.postMessage('closeIframe', '*');
+
+      const audioUrl = 'sounds/nav00.m4a'; // Don't change this per loc page
+      window.top.postMessage({
+        action: 'changeAudio',
+        url: audioUrl,
+        title: 'Small Planet Phantasmagoria'
+      }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
+    });
+
+    // Function to handle back button and trigger custom actions
+    function handleBackNavigation(event) {
+      // Prevent the default back navigation
+      event.preventDefault();
+
+      // Capture the current scroll position
+      const scrollPosition = {
+        left: window.scrollX,
+        top: window.scrollY
+      };
+
+      // Restore the scroll position after navigation
+      setTimeout(() => {
+        window.scrollTo(scrollPosition.left, scrollPosition.top);
+      }, 0);
+
+      window.parent.postMessage('closeIframe', '*');
+
+      const audioUrl = 'sounds/nav00.m4a'; // Don't change this per loc page
+      window.top.postMessage({
+        action: 'changeAudio',
+        url: audioUrl,
+        title: 'Small Planet Phantasmagoria'
+      }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
+    }
+
+    // Listen for the popstate event
+    window.addEventListener('popstate', function(event) {
+      handleBackNavigation(event);
+    });
+
+    // Initialize a state to prevent the initial popstate event from being fired
+    history.pushState(null, null, window.location.href);
+    </script>
+</body>
+</html>

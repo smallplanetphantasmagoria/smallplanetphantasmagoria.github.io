@@ -7,6 +7,17 @@
   <link rel="stylesheet" href="locstyle.css"> <!-- Link to external CSS file -->
 </head>
 <body>
+  <div id="popupoverlay" class="popupoverlay">
+    <div class="popup">
+      <img id="popupImage" src="../images/location/maps/crystal.png" alt="Popup Image">
+     </div>
+  </div>
+  <div class="bottom-left-container">
+    <div class="home-button">
+      <img id="closepage" src="../images/nav-home.webp">
+    </div>
+  </div>
+ 
   <div class="container">
     <div class="grid">
       <div class="image-row">
@@ -28,18 +39,36 @@
           <div></div>
           <a href="santa.html" class="nav-button"><img src="../images/nav-n.webp" alt="Go North"></a>
           <div></div>
-          <a href="neptune.html" class="nav-button"><img src="../images/nav-w.webp" alt="Go West"></a>
-          <img class="nav-button" id="closepage" src="../images/nav-home.gif" alt="Navigation Home">
+          <img class="nav-button" src="../images/nav-h.webp" alt="Deep Fog - Road Closed">
+          <img class="nav-button" id="map-button" src="../images/nav-m.webp" alt="map">
           <a href="cookie.html" class="nav-button"><img src="../images/nav-e.webp" alt="Go East"></a>
-          <div></div>
+          <a href="neptune.html" class="nav-button"><img src="../images/nav-s.webp" alt="Go South"></a>
+          <a href="volcano.html" class="nav-button"><img src="../images/nav-s.webp" alt="Go South"></a>
           <a href="mushroom.html" class="nav-button"><img src="../images/nav-s.webp" alt="Go South"></a>
-          <div></div>
         </div>
       </div>
     </div>
   </div>
   <script>
         window.addEventListener('load', function() {
+          const navButton = document.getElementById('map-button');
+          const overlay = document.getElementById('popupoverlay');
+          const popupImage = document.getElementById('popupImage');
+
+          navButton.addEventListener('click', () => {
+              overlay.style.display = 'flex';
+          });
+
+          overlay.addEventListener('click', () => {
+              overlay.style.display = 'none';
+          });
+
+          popupImage.addEventListener('click', (event) => {
+              event.stopPropagation(); // Prevent the overlay click event from firing
+              overlay.style.display = 'none';
+          });
+
+          
             document.body.style.opacity = '1';
 
                 // Select all links on the page
@@ -78,7 +107,10 @@
 
     // Add event listener for the close button
     document.getElementById('closepage').addEventListener('click', function() {
-      window.parent.postMessage('closeIframe', '*');
+      document.body.style.opacity = '0';
+      setTimeout(function() {
+        window.parent.postMessage('closeIframe', '*');
+      }, 500);
 
       const audioUrl = 'sounds/nav00.m4a'; // Don't change this per loc page
       window.top.postMessage({

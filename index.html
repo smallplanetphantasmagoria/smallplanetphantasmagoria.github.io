@@ -265,7 +265,7 @@
   </head>
 <body>
     <iframe id="clickableIframe"></iframe>
-    <iframe id="main-frame" src="" allow="autoplay"></iframe>
+    <iframe id="main-frame" src=""></iframe>
   
     <div class="bottom-right-container">
       <div class="audio-player" id="audio-button">
@@ -282,7 +282,7 @@
           <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
         </svg>
         <audio id="audio-player" loop>
-          <source id="audio-source" src="sounds/nav00.m4a" type="audio/mpeg">
+          <source id="audio-source" src="" type="audio/mpeg">
         </audio>
       </div>
   
@@ -309,92 +309,177 @@
     </div>
   </body>
   
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
   <script>
     // Elements
     const iframe = document.getElementById('main-frame');
-    const audioPlayer = document.getElementById('audio-player');
-    const audioSource = document.getElementById('audio-source');
     const audioButton = document.getElementById('audio-button');
     const musicNoteIcon = document.getElementById('music-note-icon');
     const playIcon = document.getElementById('play-icon');
     const pauseIcon = document.getElementById('pause-icon');
     const splashScreen = document.getElementById('splash-screen');
     const landingPage = document.getElementById('landing-page');
-    
+
     let fadeDuration = 1000; // Fade duration in milliseconds
-    
+
+    // Howler.js sound setup
+    let sound = new Howl({
+      src: ['sounds/nav00.m4a'],
+      volume: 1,
+      onend: function() {
+        sound.play(); // Manually restart to ensure gapless looping
+      },
+      onload: function() {
+        console.log('Audio file loaded');
+      }
+    });
+
+
     // Helper function to get absolute URL
     function getAbsoluteUrl(url) {
       const a = document.createElement('a');
       a.href = url;
       return a.href;
     }
-    
+
     window.addEventListener('message', (event) => {
       if (event.data.action === 'changeAudio') {
-        const wasPlaying = !audioPlayer.paused; // Check if audio was playing
         const newAudioUrl = getAbsoluteUrl(event.data.url);
-    
+        const wasPlaying = sound.playing(); // Check if the sound was playing
+
         // Check if the new URL is different from the current URL
-        if (audioSource.src !== newAudioUrl) {
+        if (sound._src[0] !== newAudioUrl) {
           fadeOutAudio(() => {
-            audioSource.src = newAudioUrl; // Set new audio source
-            audioPlayer.load(); // Reload audio element
-            if (wasPlaying) {
-              fadeInAudio(); // Fade in audio only if it was playing
-            }
+            sound.unload();
+            sound = new Howl({
+              src: [newAudioUrl],
+              volume: 0,
+              onend: function() {
+                sound.play(); // Manually restart to ensure gapless looping
+              },
+              onload: function() {
+                if (wasPlaying) {
+                  fadeInAudio();
+                }
+              }
+            });
           });
         }
       }
     });
-    
-  
-    
+
+    function fadeInAudio() {
+      let volume = 0;
+      sound.volume(volume);
+      sound.play();
+
+      const interval = setInterval(() => {
+        if (volume < 1) {
+          volume += 0.05;
+          sound.volume(Math.min(volume, 1));
+        } else {
+          clearInterval(interval);
+        }
+      }, fadeDuration / 40); // Adjust interval timing for smoother fade-in
+    }
+
+
+    function fadeOutAudio(callback) {
+      let volume = sound.volume();
+
+      if (volume === 0) {
+        if (callback) callback();
+        return; // If already at 0 volume, call the callback immediately
+      }
+
+      const interval = setInterval(() => {
+        if (volume > 0) {
+          volume -= 0.05;
+          sound.volume(Math.max(volume, 0));
+        } else {
+          clearInterval(interval);
+          sound.stop(); // Ensure the sound stops completely to avoid overlap
+          if (callback) callback();
+        }
+      }, fadeDuration / 20); // Adjust interval timing for smoother fade-out
+    }
+
+
+    audioButton.addEventListener('mouseover', () => {
+      if (!sound.playing()) {
+        musicNoteIcon.style.display = 'none';
+        playIcon.style.display = 'block';
+        pauseIcon.style.display = 'none';
+      }
+      audioButton.style.background = 'gray';
+    });
+
+    audioButton.addEventListener('mouseout', () => {
+      if (!sound.playing()) {
+        playIcon.style.display = 'none';
+        musicNoteIcon.style.display = 'block';
+        pauseIcon.style.display = 'none';
+      }
+      audioButton.style.background = '';
+    });
+
+    audioButton.addEventListener('click', () => {
+      if (!sound.playing()) {
+        playIcon.style.display = 'none';
+        pauseIcon.style.display = 'block';
+        fadeInAudio();
+      } else {
+        pauseIcon.style.display = 'none';
+        musicNoteIcon.style.display = 'block';
+        fadeOutAudio(() => sound.pause());
+      }
+    });
+
+
+
     function enterWebsite() {
-    fadeOutLandingPage(() => {
+      fadeOutLandingPage(() => {
         splashScreen.style.display = 'flex'; // Show splash screen
         focusIframe();
-        document.getElementById('main-frame').src = "test.html";
+        document.getElementById('main-frame').src = "nav.html";
         document.getElementById('splash-screen').style.pointerEvents = "none";
         document.getElementById('nav00b2').style.pointerEvents = "none";
 
         setTimeout(() => {
-            document.getElementById('splash-screen').style.pointerEvents = "auto";
-            document.getElementById('nav00b2').style.pointerEvents = "auto";
+          document.getElementById('splash-screen').style.pointerEvents = "auto";
+          document.getElementById('nav00b2').style.pointerEvents = "auto";
         }, 12000);
-    });
-}
+      });
+    }
 
-function enterWebsiteWithAudio() {
-    fadeOutLandingPage(() => {
+    function enterWebsiteWithAudio() {
+      fadeOutLandingPage(() => {
         splashScreen.style.display = 'flex'; // Show splash screen
         fadeInAudio();
         focusIframe();
         playIcon.style.display = 'none';
         pauseIcon.style.display = 'block';
         musicNoteIcon.style.display = 'none';
-        document.getElementById('main-frame').src = "test.html";
+        document.getElementById('main-frame').src = "nav.html";
         document.getElementById('splash-screen').style.pointerEvents = "none";
         document.getElementById('nav00b2').style.pointerEvents = "none";
 
         setTimeout(() => {
-            document.getElementById('splash-screen').style.pointerEvents = "auto";
-            document.getElementById('nav00b2').style.pointerEvents = "auto";
+          document.getElementById('splash-screen').style.pointerEvents = "auto";
+          document.getElementById('nav00b2').style.pointerEvents = "auto";
         }, 12000);
-    });
-}
+      });
+    }
 
-
-splashScreen.addEventListener('click', () => {
-    splashScreen.classList.add('fade-out');
-    setTimeout(() => {
+    splashScreen.addEventListener('click', () => {
+      splashScreen.classList.add('fade-out');
+      setTimeout(() => {
         changeIframeButtonStyle();
         document.getElementById('nav00b2').style.display = 'none';
         document.getElementById('splash-screen').style.display = 'none'; // Ensure display is set to none
-    }, 1500);
-});
+      }, 1500);
+    });
 
-    
     function fadeOutLandingPage(callback) {
       landingPage.style.opacity = '0';
       setTimeout(() => {
@@ -403,124 +488,44 @@ splashScreen.addEventListener('click', () => {
       }, 2000); // Match the transition duration
     }
 
-    
     let tooltipTimeout;
-    
-    // Change image and show tooltip
+
     function changeImage(element) {
       const img = element.querySelector('.menu-img');
       img.src = 'images/menu2.gif';
-    
+
       tooltipTimeout = setTimeout(() => {
         const tooltip = element.querySelector('.tooltiptext');
         tooltip.style.visibility = 'visible';
         tooltip.style.opacity = '1';
       }, 2000);
     }
-    
-    // Reset image and hide tooltip
+
     function resetImage(element) {
       const img = element.querySelector('.menu-img');
       img.src = 'images/menu.gif';
-    
+
       clearTimeout(tooltipTimeout);
       const tooltip = element.querySelector('.tooltiptext');
       tooltip.style.visibility = 'hidden';
       tooltip.style.opacity = '0';
     }
-    
-    // Fade in audio
-    function fadeInAudio() {
-      let volume = 0;
-      audioPlayer.volume = volume;
-      audioPlayer.play();
-    
-      const interval = setInterval(() => {
-        if (volume < 1) {
-          volume += 0.05;
-          audioPlayer.volume = Math.min(volume, 1);
-        } else {
-          clearInterval(interval);
-        }
-      }, fadeDuration / 40); // Adjust interval timing for smoother fade-in
-    }
-    
-    // Fade out audio
-    function fadeOutAudio(callback) {
-      let volume = audioPlayer.volume;
-    
-      const interval = setInterval(() => {
-        if (volume > 0) {
-          volume -= 0.05;
-          audioPlayer.volume = Math.max(volume, 0);
-        } else {
-          clearInterval(interval);
-          audioPlayer.pause();
-          if (callback) callback();
-        }
-      }, fadeDuration / 20); // Adjust interval timing for smoother fade-out
-    }
-    
-    // Handle audio button hover and click events
-    audioButton.addEventListener('mouseover', () => {
-      if (audioPlayer.paused) {
-        musicNoteIcon.style.display = 'none';
-        playIcon.style.display = 'block';
-        pauseIcon.style.display = 'none';
-      }
-      audioButton.style.background = 'gray';
-    });
-    
-    audioButton.addEventListener('mouseout', () => {
-      if (audioPlayer.paused) {
-        playIcon.style.display = 'none';
-        musicNoteIcon.style.display = 'block';
-        pauseIcon.style.display = 'none';
-      }
-      audioButton.style.background = '';
-    });
-    
-    audioButton.addEventListener('click', () => {
-      if (audioPlayer.paused) {
-        playIcon.style.display = 'none';
-        pauseIcon.style.display = 'block';
-        playIcon.style.display = 'none';
-        fadeInAudio();
-      } else {
-        pauseIcon.style.display = 'none';
-        musicNoteIcon.style.display = 'block';
-        playIcon.style.display = 'none';
-        fadeOutAudio();
-      }
-    });
-    
-    
-    // Function to set focus to the iframe
+
     function focusIframe() {
       iframe.focus();
     }
 
-    let animationDirection = 1; // Example direction, set to 1 for forward, -1 for backward
-    // Function to make nav buttons visible on child window
     function changeIframeButtonStyle() {
-            // Access the iframe
-            const iframe = document.getElementById('main-frame');
-            const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
-
-            // Get all elements with the class 'control-button' in the iframe
-            const buttons = iframeDocument.getElementsByClassName('control-button');
-            for (let button of buttons) {
-                button.style.color = 'white';
-            }
-
-            if (iframe.contentWindow.slowDownAnimationNearest) {
-              iframe.contentWindow.slowDownAnimationNearest(animationDirection);
-            } else {
-              console.error('slowDownAnimation function is not defined in the iframe.');
-            };
-            focusIframe();
+      const iframe = document.getElementById('main-frame');
+      const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+      const buttons = iframeDocument.getElementsByClassName('control-button');
+      for (let button of buttons) {
+        button.style.color = 'white';
+      }
+      iframeDocument.getElementsByClassName('canvas-container')[0].style.pointerEvents = 'auto';
+      focusIframe();
     }
-
-    </script>
-    </body>
+  </script>
+  
+</body>
 </html>

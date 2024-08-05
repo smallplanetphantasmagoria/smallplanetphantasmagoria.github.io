@@ -7,6 +7,17 @@
   <link rel="stylesheet" href="locstyle.css"> <!-- Link to external CSS file -->
 </head>
 <body>
+  <div id="popupoverlay" class="popupoverlay">
+    <div class="popup">
+      <img id="popupImage" src="../images/location/maps/planetarium.png" alt="Popup Image">
+     </div>
+  </div>
+  <div class="bottom-left-container">
+    <div class="home-button">
+      <img id="map-button" src="../images/nav-m.webp" alt="map">
+    </div>
+  </div>
+
   <div class="container">
     <div class="grid">
       <div class="image-row">
@@ -29,7 +40,7 @@
           <a href="mountain.html" class="nav-button"><img src="../images/nav-n.webp" alt="Go North"></a>
           <div></div>
           <a href="royal.html" class="nav-button"><img src="../images/nav-w.webp" alt="Go West"></a>
-          <img class="nav-button" id="closepage" src="../images/nav-home.gif" alt="Navigation Home">
+          <img class="nav-button" id="closepage" src="../images/nav-home.webp">
           <a href="cafe.html" class="nav-button"><img src="../images/nav-e.webp" alt="Go East"></a>
           <div></div>
           <img class="nav-button" src="../images/nav-h.webp" alt="Stop">
@@ -38,35 +49,10 @@
       </div>
     </div>
   </div>
+  <script src="../script/loc-script.js"></script>
   <script>
-        window.addEventListener('load', function() {
-            document.body.style.opacity = '1';
-
-                // Select all links on the page
-                    var links = document.querySelectorAll('a');
-
-                // Loop through each link
-                links.forEach(function(link) {
-                    // Add click event listener to each link
-                    link.addEventListener('click', function(event) {
-                        // Prevent the default action to control navigation manually
-                        event.preventDefault();
-                        
-                        // Change body opacity to 0
-                        document.body.style.opacity = '0';
-                        
-                        // Use setTimeout to navigate to the link's href after the opacity change
-                        setTimeout(function() {
-                            window.location.href = link.href;
-                        }, 2000); // Delay should match the transition duration or be slightly longer
-                    });
-                });
-        });
-        document.addEventListener('DOMContentLoaded', function() {
-
-
-
-      const audioUrl = 'sounds/nav00.m4a'; // Change this to the appropriate audio URL for each iframe page
+    document.addEventListener('DOMContentLoaded', function() {
+      const audioUrl = 'sounds/planetarium-01.wav'; // Change this to the appropriate audio URL for each iframe page
       const pageTitle = document.title; // Get the current iframe page's title
 
       // Post message to change the audio in the parent window
@@ -76,52 +62,5 @@
         title: pageTitle
       }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
     });
-
-    // Add event listener for the close button
-    document.getElementById('closepage').addEventListener('click', function() {
-      window.parent.postMessage('closeIframe', '*');
-
-      const audioUrl = 'sounds/nav00.m4a'; // Don't change this per loc page
-      window.top.postMessage({
-        action: 'changeAudio',
-        url: audioUrl,
-        title: 'Small Planet Phantasmagoria'
-      }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
-    });
-
-    // Function to handle back button and trigger custom actions
-    function handleBackNavigation(event) {
-      // Prevent the default back navigation
-      event.preventDefault();
-
-      // Capture the current scroll position
-      const scrollPosition = {
-        left: window.scrollX,
-        top: window.scrollY
-      };
-
-      // Restore the scroll position after navigation
-      setTimeout(() => {
-        window.scrollTo(scrollPosition.left, scrollPosition.top);
-      }, 0);
-
-      window.parent.postMessage('closeIframe', '*');
-
-      const audioUrl = 'sounds/nav00.m4a'; // Don't change this per loc page
-      window.top.postMessage({
-        action: 'changeAudio',
-        url: audioUrl,
-        title: 'Small Planet Phantasmagoria'
-      }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
-    }
-
-    // Listen for the popstate event
-    window.addEventListener('popstate', function(event) {
-      handleBackNavigation(event);
-    });
-
-    // Initialize a state to prevent the initial popstate event from being fired
-    history.pushState(null, null, window.location.href);
-    </script>
-</body>
+    </script></body>
 </html>

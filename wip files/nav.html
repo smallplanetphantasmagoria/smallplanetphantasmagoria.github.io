@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="title" content="Small Planet Phantasmagoria">
+  <title>Small Planet Phantasmagoria</title>
+  <!-- Prefetch images and grid data -->
+  <link rel="prefetch" href="images/nav/nav01.webp" as="image">
+  <link rel="prefetch" href="images/nav/nav02.webp" as="image">
+  <link rel="prefetch" href="images/nav/nav03.webp" as="image">
+  <link rel="prefetch" href="images/nav/nav04.webp" as="image">
+  <link rel="prefetch" href="images/nav/nav05.webp" as="image">
+  <link rel="prefetch" href="images/nav/nav06.webp" as="image">
+  <link rel="prefetch" href="images/nav/nav07.webp" as="image">
+  <link rel="prefetch" href="images/nav/nav08.webp" as="image">
+  <link rel="prefetch" href="images/nav/nav09.webp" as="image">
+  <link rel="prefetch" href="images/nav/nav10.webp" as="image">
+  <link rel="prefetch" href="images/nav/nav11.webp" as="image">
+  <link rel="prefetch" href="images/nav/nav12.webp" as="image">
+  <link rel="prefetch" href="images/nav/nav13.webp" as="image">
+  <link rel="prefetch" href="images/nav/nav14.webp" as="image">
+  <link rel="prefetch" href="images/nav/nav15.webp" as="image">
+  <link rel="prefetch" href="script/nav/grid-links01.json" as="fetch">
+  <link rel="prefetch" href="script/nav/grid-links02.json" as="fetch">
+  <link rel="prefetch" href="script/nav/grid-links03.json" as="fetch">
+  <link rel="prefetch" href="script/nav/grid-links04.json" as="fetch">
+  <link rel="prefetch" href="script/nav/grid-links05.json" as="fetch">
+  <link rel="prefetch" href="script/nav/grid-links06.json" as="fetch">
+  <link rel="prefetch" href="script/nav/grid-links07.json" as="fetch">
+  <link rel="prefetch" href="script/nav/grid-links08.json" as="fetch">
+  <link rel="prefetch" href="script/nav/grid-links09.json" as="fetch">
+  <link rel="prefetch" href="script/nav/grid-links10.json" as="fetch">
+  <link rel="prefetch" href="script/nav/grid-links11.json" as="fetch">
+  <link rel="prefetch" href="script/nav/grid-links12.json" as="fetch">
+  <link rel="prefetch" href="script/nav/grid-links13.json" as="fetch">
+  <link rel="prefetch" href="script/nav/grid-links14.json" as="fetch">
+  <link rel="prefetch" href="script/nav/grid-links15.json" as="fetch">
+  <style>
+    /* General body styles */
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background-color: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    img {
+      /* Disable image smoothing/anti-aliasing */
+      image-rendering: optimizeSpeed;             /* STOP SMOOTHING, GIVE ME SPEED  */
+      image-rendering: -moz-crisp-edges;          /* Firefox                        */
+      image-rendering: -o-crisp-edges;            /* Opera                          */
+      image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
+      image-rendering: pixelated;                 /* Universal support since 2021   */
+      image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
+      -ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
+    }
+    /* Container for images and grid overlay */
+    .container {
+      position: relative;
+      width: 90vw; /* Scale to 90% of viewport width */
+      max-width: 700px; /* Max width of images */
+      aspect-ratio: 450 / 330; /* Maintain aspect ratio */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Image styling */
+    .container img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .background-image {
+      z-index: 1;
+      transition: opacity 0.1s ease-in-out; /* Smooth transition effect */
+    }
+
+    .background-image-next {
+      opacity: 0;
+      transition: opacity 0.001s ease-in-out;
+    }
+
+    .overlay-image {
+      z-index: 2;
+    }
+
+    /* Grid overlay styles */
+    .grid-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(15, 1fr); /* 15 columns */
+      grid-template-rows: repeat(11, 1fr); /* 11 rows */
+      z-index: 3;
+    }
+
+    .grid-cell {
+      border: 0px solid rgba(255, 255, 255, 0.429); /* Thin white lines */
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0px;
+      cursor: default;
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .link-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .grid-cell.clickable {
+      cursor: pointer; /* Pointer cursor for clickable cells */
+    }
+
+    /* Mobile-specific styles */
+    @media only screen and (max-width: 768px) {
+      .container {
+        width: 100vw;
+        max-width: none; /* Remove max-width for mobile */
+        max-height: 100vh; /* Constrain height for mobile */
+        aspect-ratio: 450 / 330; /* Maintain aspect ratio */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden; /* Ensure no scrollbars */
+      }
+
+      .container img {
+        object-fit: contain; /* Ensure the image fits within the container */
+      }
+
+      .grid-overlay {
+        grid-template-columns: repeat(15, 1fr); /* 15 columns */
+        grid-template-rows: repeat(11, 1fr); /* 11 rows */
+      }
+    }
+
+    /* Ensures no scrollbars appear */
+    html, body {
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="images/nav/nav01.webp" class="background-image" alt="Background Image">
+    <img src="" class="background-image-next" alt="Next Background Image">
+    <img src="images/nav/navarrows.webp" class="overlay-image" alt="Overlay Image">
+    <div class="grid-overlay"></div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.title = 'Small Planet Phantasmagoria'; // Set the title explicitly
+    
+      const gridOverlay = document.querySelector('.grid-overlay');
+      const backgroundImage = document.querySelector('.background-image');
+      const nextBackgroundImage = document.querySelector('.background-image-next');
+      let currentIndex = getRandomIndex(); // Random starting index
+      let isUpdating = false; // Prevent concurrent updates
+      let holdInterval; // Interval for holding down click
+      let holdTimeout; // Timeout for detecting long click
+      const throttleDelay = 75; // Throttle delay in milliseconds
+      let lastExecutionTime = 0; // Last time function was executed
+    
+      function getRandomIndex() {
+        return Math.floor(Math.random() * 15) + 1;
+      }
+    
+      function throttle(func, wait) {
+        return function(...args) {
+          const now = Date.now();
+          if (now - lastExecutionTime >= wait) {
+            lastExecutionTime = now;
+            func.apply(this, args);
+          }
+        };
+      }
+    
+      function loadGrid(jsonFile) {
+        fetch(jsonFile)
+          .then(response => response.json())
+          .then(data => {
+            const grid = data.grid;
+            gridOverlay.innerHTML = ''; // Clear previous grid
+    
+            grid.forEach((row, rowIndex) => {
+              row.forEach((cell, columnIndex) => {
+                const cellElement = document.createElement('div');
+                cellElement.classList.add('grid-cell');
+    
+                if (cell.link || cell.action) {
+                  cellElement.classList.add('clickable');
+                }
+    
+                if (cell.link) {
+                  const linkWrapper = document.createElement('div');
+                  linkWrapper.classList.add('link-wrapper');
+                  linkWrapper.innerText = cell.text || '';
+    
+                  const linkElement = document.createElement('a');
+                  linkElement.href = cell.link;
+                  linkElement.appendChild(linkWrapper);
+    
+                  cellElement.innerHTML = '';
+                  cellElement.appendChild(linkElement);
+                } else if (cell.action) {
+                  cellElement.innerText = cell.text || '';
+                  cellElement.addEventListener('click', () => {
+                    if (cell.action === 'changeImage') {
+                      updateImageAndGrid(cell.newImage, cell.newGrid);
+                    }
+                  });
+                } else {
+                  cellElement.innerText = `${rowIndex + 1}-${columnIndex + 1}`;
+                  if (rowIndex === 5 && columnIndex === 0) {
+                    cellElement.classList.add('clickable');
+                    cellElement.addEventListener('mousedown', () => startHold(-1));
+                    cellElement.addEventListener('mouseup', stopHold);
+                    cellElement.addEventListener('mouseleave', stopHold);
+                    cellElement.addEventListener('click', () => {
+                      if (!holdTimeout) updateImageAndGrid(-1);
+                    });
+                  } else if (rowIndex === 5 && columnIndex === 14) {
+                    cellElement.classList.add('clickable');
+                    cellElement.addEventListener('mousedown', () => startHold(1));
+                    cellElement.addEventListener('mouseup', stopHold);
+                    cellElement.addEventListener('mouseleave', stopHold);
+                    cellElement.addEventListener('click', () => {
+                      if (!holdTimeout) updateImageAndGrid(1);
+                    });
+                  }
+                }
+    
+                gridOverlay.appendChild(cellElement);
+              });
+            });
+    
+            // Notify the parent window that the grid has been updated
+            window.parent.postMessage({ action: 'updateGrid' }, '*');
+            sendPageTitle(); // Ensure page title is sent correctly
+          })
+          .catch(error => console.error('Error loading grid data:', error));
+      }
+    
+      function preloadImage(src, callback) {
+        const img = new Image();
+        img.onload = callback;
+        img.src = src;
+      }
+    
+      function updateBackgroundImage(newImage, newGrid) {
+        preloadImage(newImage, () => {
+          nextBackgroundImage.src = newImage;
+          nextBackgroundImage.style.opacity = 1;
+    
+          nextBackgroundImage.addEventListener('transitionend', function onTransitionEnd() {
+            nextBackgroundImage.removeEventListener('transitionend', onTransitionEnd);
+            backgroundImage.src = newImage;
+            backgroundImage.style.opacity = 1;
+            nextBackgroundImage.style.opacity = 0;
+    
+            loadGrid(newGrid);
+            isUpdating = false;
+          });
+    
+          backgroundImage.style.opacity = 0;
+        });
+      }
+    
+      const updateImageAndGrid = throttle(function(offset) {
+        if (isUpdating) return;
+        isUpdating = true;
+    
+        currentIndex += offset;
+        if (currentIndex < 1) currentIndex = 15;
+        if (currentIndex > 15) currentIndex = 1;
+    
+        const newImage = `images/nav/nav${String(currentIndex).padStart(2, '0')}.webp`;
+        const newGrid = `script/nav/grid-links${String(currentIndex).padStart(2, '0')}.json`;
+        updateBackgroundImage(newImage, newGrid);
+      }, throttleDelay);
+    
+      function startHold(offset) {
+        holdTimeout = setTimeout(() => {
+          holdInterval = setInterval(() => {
+            updateImageAndGrid(offset);
+          }, 50);
+        }, 250);
+      }
+    
+      function stopHold() {
+        clearInterval(holdInterval);
+        clearTimeout(holdTimeout);
+        holdInterval = null;
+        holdTimeout = null;
+      }
+    
+      function handleKeyboardNavigation(event) {
+        switch (event.key) {
+          case 'ArrowLeft':
+            updateImageAndGrid(-1);
+            break;
+          case 'ArrowRight':
+            updateImageAndGrid(1);
+            break;
+        }
+      }
+    
+      function handleMouseWheel(event) {
+        event.preventDefault(); // Prevent default scroll behavior
+    
+        const delta = Math.sign(event.deltaY); // Detect scroll direction
+        updateImageAndGrid(delta);
+      }
+    
+      document.addEventListener('keydown', handleKeyboardNavigation);
+      gridOverlay.addEventListener('wheel', handleMouseWheel);
+    
+      const initialImage = `images/nav/nav${String(currentIndex).padStart(2, '0')}.webp`;
+      const initialGrid = `script/nav/grid-links${String(currentIndex).padStart(2, '0')}.json`;
+    
+      updateBackgroundImage(initialImage, initialGrid);
+    });
+    
+    // Function to send the page title to the parent
+    function sendPageTitle() {
+      const pageTitle = document.title;
+      window.parent.postMessage({
+        action: 'updateTitle',
+        title: pageTitle
+      }, '*');
+    }
+    
+    // Function to send the audio URL to the parent
+    window.addEventListener('load', () => {
+      const audioUrl = 'sounds/nav00.m4a'; // Change this to the appropriate audio URL for each iframe page
+      function sendAudioUrl(audioUrl) {
+        console.log('Sending audio URL:', audioUrl); // Debugging line
+      };
+      window.parent.postMessage({
+        action: 'changeAudio',
+        url: audioUrl,
+      }, '*');
+    });
+      </script></body>
+</html>

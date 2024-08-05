@@ -78,7 +78,10 @@
 
     // Add event listener for the close button
     document.getElementById('closepage').addEventListener('click', function() {
-      window.parent.postMessage('closeIframe', '*');
+      document.body.style.opacity = '0';
+      setTimeout(function() {
+        window.parent.postMessage('closeIframe', '*');
+      }, 500);
 
       const audioUrl = 'sounds/nav00.m4a'; // Don't change this per loc page
       window.top.postMessage({
