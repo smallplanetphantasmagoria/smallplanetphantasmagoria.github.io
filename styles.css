@@ -184,20 +184,6 @@ opacity: 1;
     }
 }
 
-.frame-info {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    color: white;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-family: Arial, sans-serif;
-    user-select: none; /* Prevent text selection */
-    -webkit-user-select: none; /* Prevent text selection on iOS */
-    display: block; /* Change to block to see frame# */
-}
-
 #clickableIframe {
     position: fixed;
     top: 0;

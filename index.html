@@ -78,7 +78,7 @@
     }
   
     .audio-player {
-      display: flex;
+      display: none; /* flex to activate */
       align-items: center;
       justify-content: center;
       width: 40px;
@@ -102,7 +102,7 @@
     }
   
     .menu {
-      display: flex;
+      display: none; /* flex to activate */
       align-items: center;
       justify-content: center;
       filter: grayscale(100%) brightness(50%);
@@ -240,10 +240,11 @@
       background: black;
       color: white;
       font-family: Courier, monospace;
-      font-size: 16px;
+      font-size: 18px;
       padding: 20px;
       border: 1px solid white;
       border-radius: 10px;
+      max-width: 800px;
     }
   
     .landing-content a {
@@ -302,9 +303,12 @@
     <!-- Landing Page -->
     <div class="landing-page" id="landing-page">
       <div class="landing-content">
-        <p>Welcome to Small Planet Phantasmagoria, a Tamura Shigeru fanpage!<br><br>The website is still under construction, but feel free to start exploring.</p>
+        <p>Welcome to Small Planet Phantasmagoria, a Tamura Shigeru fanpage!<br><br>The website is still under construction, but feel free to start exploring.<br><br>Use the buttons or keyboard arrows to navigate, and click on various parts of the planet to discover more about Phantasmagoria.</p>
         <a href="#" onclick="enterWebsite(); return false;">Explore</a>
+        <!--         
         <a href="#" onclick="enterWebsiteWithAudio(); return false;">Explore (+ soundtrack)</a>
+                  -->
+        <a href="#" onclick="" style="pointer-events: none; opacity: 0.5;">Explore (+ soundtrack)</a>
       </div>
     </div>
   </body>
