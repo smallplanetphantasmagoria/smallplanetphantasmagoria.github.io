@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About | Small Planet Phantasmagoria</title>
+  <link rel="stylesheet" href="location/locstyle.css"> <!-- Link to external CSS file -->
+  <style>
+    video {
+      width: 50% !important; /* Adjust width as needed */
+    }
+  </style>
+
+</head>
+<body>
+  <div class="container">
+    <div class="grid">
+      <div class="image-row">
+        <video src="images/about.mp4" type="video/mp4" autoplay muted loop></video>
+    </div>
+      <div class="text-row">
+        <p>
+          <span style="font-size: 1.1em;"><i>While travelling the realm of dreams, I discovered a small planet...</i></span>
+          <br>
+          <br>
+          Phantasmagoria is the invention of Tamura Shigeru, an illustrator, mangaka, and animated-film maker from Japan. Inspired by his work—particularly, the series of animated shorts <i>A Piece of Phantasmagoria</i>, and its corresponding point-and-click video game—this is a fanpage dedicated to Tamura's creation.
+          <br>
+          <br>
+          The website is still under construction. If you've somehow stumbled across this, then please forgive its current state. 
+        </p>
+      </div>
+      <div class="navigation">
+        <div class="grid-3x3">
+          <div></div>
+          <a href="nav.html" class="nav-button"><img src="images/nav-home.gif" alt="Navigation Home"></a>
+          <div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    window.addEventListener('load', () => {
+      const audioUrl = 'sounds/about.m4a'; // Change this to the appropriate audio URL for each iframe page
+      const pageTitle = document.title; // Get the current iframe page's title
+
+      window.parent.postMessage({
+        action: 'changeAudio',
+        url: audioUrl,
+        title: pageTitle // Include the page title in the message
+      }, '*'); // Ensure that '*' is replaced with the specific origin if security is a concern
+    });
+  </script>
+</body>
+</html>

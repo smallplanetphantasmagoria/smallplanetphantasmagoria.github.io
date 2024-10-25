@@ -17,7 +17,7 @@ window.onload = () => {
     let isAnimating = false; // Flag to track if animation is running
     let lastScrollTime = 0; // Initialize the lastScrollTime variable
     const spriteSheet = new Image();
-    spriteSheet.src = 'sprite.webp';
+    spriteSheet.src = 'images/sprite.webp';
 
     const clickableAreas = [
         {

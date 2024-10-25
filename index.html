@@ -102,7 +102,7 @@
     }
   
     .menu {
-      display: none; /* flex to activate */
+      display: flex; /* flex to activate */
       align-items: center;
       justify-content: center;
       filter: grayscale(100%) brightness(50%);
@@ -288,7 +288,7 @@
       </div>
   
       <div class="menu">
-        <a href="#" onmouseover="changeImage(this)" onmouseout="resetImage(this)">
+        <a href="/about.html" onmouseover="changeImage(this)" onmouseout="resetImage(this)">
           <img src="images/menu.gif" class="menu-img">
           <span class="tooltiptext">ABOUT</span>
         </a>
@@ -303,7 +303,7 @@
     <!-- Landing Page -->
     <div class="landing-page" id="landing-page">
       <div class="landing-content">
-        <p>Welcome to Small Planet Phantasmagoria, a Tamura Shigeru fanpage!<br><br>The website is still under construction, but feel free to start exploring.<br><br>Use the buttons or keyboard arrows to navigate, and click on various parts of the planet to discover more about Phantasmagoria.</p>
+        <p>Welcome to Small Planet Phantasmagoria, a Tamura Shigeru fansite!<br><br>The website is still under construction, but feel free to start exploring.<br><br>Use the buttons, arrow keys, or scroll wheel to rotate the planet, and click on locations to visit them.</p>
         <a href="#" onclick="enterWebsite(); return false;">Explore</a>
         <!--         
         <a href="#" onclick="enterWebsiteWithAudio(); return false;">Explore (+ soundtrack)</a>
